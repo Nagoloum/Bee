@@ -1,0 +1,224 @@
+{
+  "common": {
+    "appName": "BEE",
+    "tagline": "The Buzzing Marketplace",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "view": "View",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "noResults": "No results found",
+    "seeAll": "See all",
+    "seeLess": "See less",
+    "required": "Required",
+    "optional": "Optional",
+    "or": "or",
+    "and": "and",
+    "yes": "Yes",
+    "no": "No",
+    "currency": "FCFA",
+    "free": "Free"
+  },
+
+  "nav": {
+    "home": "Home",
+    "catalogue": "Catalogue",
+    "categories": "Categories",
+    "vendors": "Shops",
+    "flashSales": "Flash Sales",
+    "myAccount": "My Account",
+    "myOrders": "My Orders",
+    "myWallet": "My Wallet",
+    "logout": "Sign Out",
+    "login": "Sign In",
+    "register": "Create Account",
+    "becomeVendor": "Sell on BEE",
+    "becomeDelivery": "Deliver with BEE",
+    "cart": "Cart",
+    "notifications": "Notifications"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Welcome back!",
+      "subtitle": "Sign in to your BEE account",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "withGoogle": "Continue with Google",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create account",
+      "error": "Invalid email or password"
+    },
+    "register": {
+      "title": "Join BEE",
+      "subtitle": "Create your account in seconds",
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Create my account",
+      "withGoogle": "Continue with Google",
+      "alreadyAccount": "Already have an account?",
+      "login": "Sign in",
+      "asClient": "Client account",
+      "asVendor": "Vendor account",
+      "asDelivery": "Delivery account",
+      "otpTitle": "Phone Verification",
+      "otpSubtitle": "Enter the code sent to {phone}",
+      "otpCode": "OTP Code",
+      "otpSubmit": "Verify",
+      "otpResend": "Resend code",
+      "otpExpires": "Expires in {time}"
+    },
+    "vendor": {
+      "title": "Open your shop",
+      "subtitle": "Start selling on BEE today",
+      "shopName": "Shop name",
+      "shopSlug": "Shop URL",
+      "region": "Region",
+      "description": "Description (optional)"
+    }
+  },
+
+  "storefront": {
+    "hero": {
+      "title": "Everything you need,",
+      "titleHighlight": "delivered to you",
+      "subtitle": "Thousands of products from the best sellers in Cameroon",
+      "cta": "Explore the catalogue",
+      "ctaSecondary": "Sell on BEE"
+    },
+    "featured": "Featured Products",
+    "newArrivals": "New Arrivals",
+    "flashSales": "Flash Sales",
+    "flashSalesEnd": "Ends in",
+    "categories": "Popular Categories",
+    "topVendors": "Top Vendors",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "stockLeft": "{count} left",
+    "product": {
+      "description": "Description",
+      "variants": "Variants",
+      "reviews": "Reviews",
+      "shipping": "Shipping",
+      "sold": "{count} sold",
+      "rating": "{rating}/5"
+    }
+  },
+
+  "cart": {
+    "title": "My Cart",
+    "empty": "Your cart is empty",
+    "emptyCta": "Continue Shopping",
+    "item": "item",
+    "items": "items",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "discount": "Discount",
+    "total": "Total",
+    "coupon": "Promo code",
+    "applyCoupon": "Apply",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "freeDelivery": "Free delivery"
+  },
+
+  "orders": {
+    "title": "My Orders",
+    "empty": "No orders yet",
+    "orderNumber": "Order #{number}",
+    "status": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "READY": "Ready",
+      "PICKED_UP": "Picked Up",
+      "IN_TRANSIT": "In Transit",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded",
+      "DISPUTED": "Disputed"
+    },
+    "trackDelivery": "Track Delivery"
+  },
+
+  "vendor": {
+    "dashboard": "Dashboard",
+    "products": "My Products",
+    "orders": "Orders",
+    "stats": "Statistics",
+    "wallet": "Wallet",
+    "coupons": "Coupons",
+    "flashSales": "Flash Sales",
+    "profile": "Shop Profile",
+    "subscription": "Subscription",
+    "recruitment": "Recruitment",
+    "team": "My Team"
+  },
+
+  "delivery": {
+    "dashboard": "Dashboard",
+    "available": "Available Orders",
+    "myDeliveries": "My Deliveries",
+    "wallet": "Wallet",
+    "profile": "My Profile",
+    "subscription": "Subscription"
+  },
+
+  "admin": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "vendors": "Vendors",
+    "delivery": "Delivery Agents",
+    "products": "Products",
+    "orders": "Orders",
+    "disputes": "Disputes",
+    "subscriptions": "Subscriptions",
+    "wallets": "Wallets",
+    "catalog": "Official Catalog",
+    "logs": "Audit Logs",
+    "settings": "Settings"
+  },
+
+  "errors": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters",
+    "passwordMatch": "Passwords do not match",
+    "phoneFormat": "Format: +237XXXXXXXXX",
+    "uploadFailed": "Upload failed",
+    "networkError": "Network error, please try again"
+  },
+
+  "regions": {
+    "CM-CE": "Centre (Yaoundé)",
+    "CM-LT": "Littoral (Douala)",
+    "CM-NO": "North",
+    "CM-EN": "Far North",
+    "CM-AD": "Adamawa",
+    "CM-NW": "North-West",
+    "CM-SW": "South-West",
+    "CM-OU": "West",
+    "CM-ES": "East",
+    "CM-SU": "South"
+  }
+}

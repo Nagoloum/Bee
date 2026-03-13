@@ -1,0 +1,224 @@
+{
+  "common": {
+    "appName": "BEE",
+    "tagline": "Le marché qui bourdonne",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "view": "Voir",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "noResults": "Aucun résultat trouvé",
+    "seeAll": "Voir tout",
+    "seeLess": "Voir moins",
+    "required": "Requis",
+    "optional": "Optionnel",
+    "or": "ou",
+    "and": "et",
+    "yes": "Oui",
+    "no": "Non",
+    "currency": "FCFA",
+    "free": "Gratuit"
+  },
+
+  "nav": {
+    "home": "Accueil",
+    "catalogue": "Catalogue",
+    "categories": "Catégories",
+    "vendors": "Boutiques",
+    "flashSales": "Ventes Flash",
+    "myAccount": "Mon compte",
+    "myOrders": "Mes commandes",
+    "myWallet": "Mon portefeuille",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "becomeVendor": "Vendre sur BEE",
+    "becomeDelivery": "Livrer avec BEE",
+    "cart": "Panier",
+    "notifications": "Notifications"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Bon retour !",
+      "subtitle": "Connectez-vous à votre compte BEE",
+      "email": "Adresse email",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "withGoogle": "Continuer avec Google",
+      "noAccount": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
+      "error": "Email ou mot de passe incorrect"
+    },
+    "register": {
+      "title": "Rejoindre BEE",
+      "subtitle": "Créez votre compte en quelques secondes",
+      "name": "Nom complet",
+      "email": "Adresse email",
+      "phone": "Numéro de téléphone",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Créer mon compte",
+      "withGoogle": "Continuer avec Google",
+      "alreadyAccount": "Déjà un compte ?",
+      "login": "Se connecter",
+      "asClient": "Compte client",
+      "asVendor": "Compte vendeur",
+      "asDelivery": "Compte livreur",
+      "otpTitle": "Vérification du téléphone",
+      "otpSubtitle": "Entrez le code envoyé au {phone}",
+      "otpCode": "Code OTP",
+      "otpSubmit": "Vérifier",
+      "otpResend": "Renvoyer le code",
+      "otpExpires": "Expire dans {time}"
+    },
+    "vendor": {
+      "title": "Ouvrez votre boutique",
+      "subtitle": "Commencez à vendre sur BEE dès aujourd'hui",
+      "shopName": "Nom de la boutique",
+      "shopSlug": "URL de la boutique",
+      "region": "Région",
+      "description": "Description (optionnel)"
+    }
+  },
+
+  "storefront": {
+    "hero": {
+      "title": "Tout ce dont vous avez besoin,",
+      "titleHighlight": "livré chez vous",
+      "subtitle": "Des milliers de produits auprès des meilleurs vendeurs du Cameroun",
+      "cta": "Découvrir le catalogue",
+      "ctaSecondary": "Vendre sur BEE"
+    },
+    "featured": "Produits en vedette",
+    "newArrivals": "Nouveautés",
+    "flashSales": "Ventes Flash",
+    "flashSalesEnd": "Fin dans",
+    "categories": "Catégories populaires",
+    "topVendors": "Meilleurs vendeurs",
+    "addToCart": "Ajouter au panier",
+    "buyNow": "Acheter maintenant",
+    "outOfStock": "Rupture de stock",
+    "inStock": "En stock",
+    "stockLeft": "{count} restant(s)",
+    "product": {
+      "description": "Description",
+      "variants": "Variantes",
+      "reviews": "Avis",
+      "shipping": "Livraison",
+      "sold": "{count} vendus",
+      "rating": "{rating}/5"
+    }
+  },
+
+  "cart": {
+    "title": "Mon panier",
+    "empty": "Votre panier est vide",
+    "emptyCta": "Continuer mes achats",
+    "item": "article",
+    "items": "articles",
+    "subtotal": "Sous-total",
+    "delivery": "Livraison",
+    "discount": "Réduction",
+    "total": "Total",
+    "coupon": "Code promo",
+    "applyCoupon": "Appliquer",
+    "checkout": "Passer la commande",
+    "remove": "Supprimer",
+    "freeDelivery": "Livraison gratuite"
+  },
+
+  "orders": {
+    "title": "Mes commandes",
+    "empty": "Aucune commande pour le moment",
+    "orderNumber": "Commande #{number}",
+    "status": {
+      "PENDING": "En attente",
+      "CONFIRMED": "Confirmée",
+      "PREPARING": "En préparation",
+      "READY": "Prête",
+      "PICKED_UP": "Récupérée",
+      "IN_TRANSIT": "En cours de livraison",
+      "DELIVERED": "Livrée",
+      "CANCELLED": "Annulée",
+      "REFUNDED": "Remboursée",
+      "DISPUTED": "En litige"
+    },
+    "trackDelivery": "Suivre la livraison"
+  },
+
+  "vendor": {
+    "dashboard": "Tableau de bord",
+    "products": "Mes produits",
+    "orders": "Commandes",
+    "stats": "Statistiques",
+    "wallet": "Portefeuille",
+    "coupons": "Coupons",
+    "flashSales": "Ventes flash",
+    "profile": "Profil boutique",
+    "subscription": "Abonnement",
+    "recruitment": "Recrutement",
+    "team": "Mon équipe"
+  },
+
+  "delivery": {
+    "dashboard": "Tableau de bord",
+    "available": "Commandes disponibles",
+    "myDeliveries": "Mes livraisons",
+    "wallet": "Portefeuille",
+    "profile": "Mon profil",
+    "subscription": "Abonnement"
+  },
+
+  "admin": {
+    "dashboard": "Tableau de bord",
+    "users": "Utilisateurs",
+    "vendors": "Vendeurs",
+    "delivery": "Livreurs",
+    "products": "Produits",
+    "orders": "Commandes",
+    "disputes": "Litiges",
+    "subscriptions": "Abonnements",
+    "wallets": "Portefeuilles",
+    "catalog": "Catalogue officiel",
+    "logs": "Audit logs",
+    "settings": "Paramètres"
+  },
+
+  "errors": {
+    "required": "Ce champ est requis",
+    "email": "Email invalide",
+    "minLength": "Minimum {min} caractères",
+    "maxLength": "Maximum {max} caractères",
+    "passwordMatch": "Les mots de passe ne correspondent pas",
+    "phoneFormat": "Format: +237XXXXXXXXX",
+    "uploadFailed": "Échec du téléchargement",
+    "networkError": "Erreur réseau, veuillez réessayer"
+  },
+
+  "regions": {
+    "CM-CE": "Centre (Yaoundé)",
+    "CM-LT": "Littoral (Douala)",
+    "CM-NO": "Nord",
+    "CM-EN": "Extrême-Nord",
+    "CM-AD": "Adamaoua",
+    "CM-NW": "Nord-Ouest",
+    "CM-SW": "Sud-Ouest",
+    "CM-OU": "Ouest",
+    "CM-ES": "Est",
+    "CM-SU": "Sud"
+  }
+}
