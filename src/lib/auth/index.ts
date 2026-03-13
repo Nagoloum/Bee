@@ -19,8 +19,8 @@ export const auth = betterAuth({
 
   // ─── Email + Password ──────────────────────────────────────────────────────
   emailAndPassword: {
-    enabled:          true,
-    requireEmailVerification: false, // simplified for now
+    enabled: true,
+    requireEmailVerification: false,
     minPasswordLength: 8,
   },
 
@@ -35,11 +35,11 @@ export const auth = betterAuth({
 
   // ─── Session ───────────────────────────────────────────────────────────────
   session: {
-    expiresIn:          60 * 60 * 24 * 30,  // 30 days
-    updateAge:          60 * 60 * 24,        // refresh every 24h
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    updateAge:  60 * 60 * 24,      // refresh every 24h
     cookieCache: {
-      enabled:   true,
-      maxAge:    60 * 5,
+      enabled: true,
+      maxAge:  60 * 5,
     },
   },
 
@@ -52,8 +52,8 @@ export const auth = betterAuth({
         input:        true,
       },
       phone: {
-        type:    "string",
-        input:   true,
+        type:     "string",
+        input:    true,
         required: false,
       },
       phoneVerified: {
@@ -67,9 +67,27 @@ export const auth = betterAuth({
         input:        false,
       },
       region: {
-        type:    "string",
-        input:   true,
+        type:     "string",
+        input:    true,
         required: false,
+      },
+    },
+  },
+
+  // ─── Hooks ────────────────────────────────────────────────────────────────
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          // Ensure every new user gets CLIENT role by default
+          return {
+            data: {
+              ...user,
+              role:   (user as any).role   ?? "CLIENT",
+              status: (user as any).status ?? "ACTIVE",
+            },
+          };
+        },
       },
     },
   },

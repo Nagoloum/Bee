@@ -16,33 +16,33 @@ async function seed() {
   console.log("📁 Seeding categories...");
 
   const categoryData = [
-    { name: "Électronique",       nameEn: "Electronics",      slug: "electronique",      icon: "Laptop",         color: "#3B82F6" },
-    { name: "Mode & Vêtements",   nameEn: "Fashion",          slug: "mode",              icon: "Shirt",          color: "#EC4899" },
-    { name: "Maison & Cuisine",   nameEn: "Home & Kitchen",   slug: "maison",            icon: "Home",           color: "#10B981" },
-    { name: "Beauté & Santé",     nameEn: "Beauty & Health",  slug: "beaute",            icon: "Sparkles",       color: "#8B5CF6" },
-    { name: "Alimentation",       nameEn: "Food & Grocery",   slug: "alimentation",      icon: "ShoppingBasket", color: "#F59E0B" },
-    { name: "Sport & Loisirs",    nameEn: "Sports & Leisure", slug: "sport",             icon: "Dumbbell",       color: "#EF4444" },
-    { name: "Bébé & Enfants",     nameEn: "Baby & Kids",      slug: "bebe",              icon: "Baby",           color: "#06B6D4" },
-    { name: "Auto & Moto",        nameEn: "Auto & Moto",      slug: "auto",              icon: "Car",            color: "#64748B" },
-    { name: "Informatique",       nameEn: "Computers",        slug: "informatique",      icon: "Monitor",        color: "#6366F1" },
-    { name: "Téléphonie",         nameEn: "Mobile Phones",    slug: "telephonie",        icon: "Smartphone",     color: "#14B8A6" },
-    { name: "Livres & Papeterie", nameEn: "Books & Stationery",slug: "livres",           icon: "BookOpen",       color: "#A78BFA" },
-    { name: "Agriculture",        nameEn: "Agriculture",      slug: "agriculture",       icon: "Wheat",          color: "#84CC16" },
-    { name: "Services",           nameEn: "Services",         slug: "services",          icon: "Briefcase",      color: "#F97316" },
-    { name: "Artisanat",          nameEn: "Crafts",           slug: "artisanat",         icon: "Palette",        color: "#FB7185" },
+    { name: "Électronique",       nameEn: "Electronics",       slug: "electronique",  icon: "Laptop",         color: "#3B82F6" },
+    { name: "Mode & Vêtements",   nameEn: "Fashion",           slug: "mode",          icon: "Shirt",          color: "#EC4899" },
+    { name: "Maison & Cuisine",   nameEn: "Home & Kitchen",    slug: "maison",        icon: "Home",           color: "#10B981" },
+    { name: "Beauté & Santé",     nameEn: "Beauty & Health",   slug: "beaute",        icon: "Sparkles",       color: "#8B5CF6" },
+    { name: "Alimentation",       nameEn: "Food & Grocery",    slug: "alimentation",  icon: "ShoppingBasket", color: "#F59E0B" },
+    { name: "Sport & Loisirs",    nameEn: "Sports & Leisure",  slug: "sport",         icon: "Dumbbell",       color: "#EF4444" },
+    { name: "Bébé & Enfants",     nameEn: "Baby & Kids",       slug: "bebe",          icon: "Baby",           color: "#06B6D4" },
+    { name: "Auto & Moto",        nameEn: "Auto & Moto",       slug: "auto",          icon: "Car",            color: "#64748B" },
+    { name: "Informatique",       nameEn: "Computers",         slug: "informatique",  icon: "Monitor",        color: "#6366F1" },
+    { name: "Téléphonie",         nameEn: "Mobile Phones",     slug: "telephonie",    icon: "Smartphone",     color: "#14B8A6" },
+    { name: "Livres & Papeterie", nameEn: "Books & Stationery",slug: "livres",        icon: "BookOpen",       color: "#A78BFA" },
+    { name: "Agriculture",        nameEn: "Agriculture",       slug: "agriculture",   icon: "Wheat",          color: "#84CC16" },
+    { name: "Services",           nameEn: "Services",          slug: "services",      icon: "Briefcase",      color: "#F97316" },
+    { name: "Artisanat",          nameEn: "Crafts",            slug: "artisanat",     icon: "Palette",        color: "#FB7185" },
   ];
 
   for (const cat of categoryData) {
     await db.insert(categories).values({
-      id:        createId(),
-      name:      cat.name,
-      nameEn:    cat.nameEn,
-      slug:      cat.slug,
-      icon:      cat.icon,
-      color:     cat.color,
-      order:     categoryData.indexOf(cat),
-      isActive:  true,
-      isFeatured:categoryData.indexOf(cat) < 6,
+      id:         createId(),
+      name:       cat.name,
+      nameEn:     cat.nameEn,
+      slug:       cat.slug,
+      icon:       cat.icon,
+      color:      cat.color,
+      order:      categoryData.indexOf(cat),
+      isActive:   true,
+      isFeatured: categoryData.indexOf(cat) < 6,
     }).onConflictDoNothing();
   }
   console.log(`  ✅ ${categoryData.length} categories created\n`);
@@ -69,14 +69,14 @@ async function seed() {
       hasBoostedVisibility: false,
       isPopular: false,
       features: [
-        { label: "10 produits maximum",      included: true },
-        { label: "2 photos par produit",      included: true },
-        { label: "Page boutique",             included: true },
-        { label: "Flash sales",               included: false },
-        { label: "Coupons promotionnels",     included: false },
-        { label: "Statistiques avancées",     included: false },
-        { label: "Support prioritaire",       included: false },
-        { label: "Boost de visibilité",       included: false },
+        { label: "10 produits maximum",    included: true  },
+        { label: "2 photos par produit",    included: true  },
+        { label: "Page boutique",           included: true  },
+        { label: "Flash sales",             included: false },
+        { label: "Coupons promotionnels",   included: false },
+        { label: "Statistiques avancées",   included: false },
+        { label: "Support prioritaire",     included: false },
+        { label: "Boost de visibilité",     included: false },
       ],
     },
     {
@@ -97,14 +97,14 @@ async function seed() {
       hasBoostedVisibility: false,
       isPopular: true,
       features: [
-        { label: "100 produits maximum",      included: true },
-        { label: "5 photos par produit",       included: true },
-        { label: "2 flash sales/jour",         included: true },
-        { label: "5 coupons (-15% max)",       included: true },
-        { label: "Statistiques avancées",      included: true },
-        { label: "Support prioritaire",        included: false },
-        { label: "Boost de visibilité",        included: false },
-        { label: "Recrutement",                included: false },
+        { label: "100 produits maximum",    included: true  },
+        { label: "5 photos par produit",    included: true  },
+        { label: "2 flash sales/jour",      included: true  },
+        { label: "5 coupons (-15% max)",    included: true  },
+        { label: "Statistiques avancées",   included: true  },
+        { label: "Support prioritaire",     included: false },
+        { label: "Boost de visibilité",     included: false },
+        { label: "Recrutement",             included: false },
       ],
     },
     {
@@ -125,14 +125,14 @@ async function seed() {
       hasBoostedVisibility: true,
       isPopular: false,
       features: [
-        { label: "Produits illimités",         included: true },
-        { label: "10 photos par produit",      included: true },
-        { label: "5 flash sales/jour",         included: true },
-        { label: "20 coupons (-20% max)",      included: true },
-        { label: "Statistiques avancées",      included: true },
-        { label: "Support prioritaire 24/7",   included: true },
-        { label: "Boost de visibilité",        included: true },
-        { label: "Offres de recrutement",      included: true },
+        { label: "Produits illimités",        included: true },
+        { label: "10 photos par produit",     included: true },
+        { label: "5 flash sales/jour",        included: true },
+        { label: "20 coupons (-20% max)",     included: true },
+        { label: "Statistiques avancées",     included: true },
+        { label: "Support prioritaire 24/7",  included: true },
+        { label: "Boost de visibilité",       included: true },
+        { label: "Offres de recrutement",     included: true },
       ],
     },
     {
@@ -153,11 +153,11 @@ async function seed() {
       hasBoostedVisibility: false,
       isPopular: false,
       features: [
-        { label: "500 FCFA / livraison",       included: true },
-        { label: "Toutes les commandes",       included: true },
-        { label: "Badge Fiable (50 livraisons)",included: true },
-        { label: "Commandes prioritaires",     included: false },
-        { label: "Bonus performance",          included: false },
+        { label: "500 FCFA / livraison",        included: true  },
+        { label: "Toutes les commandes",        included: true  },
+        { label: "Badge Fiable (50 livraisons)",included: true  },
+        { label: "Commandes prioritaires",      included: false },
+        { label: "Bonus performance",           included: false },
       ],
     },
     {
@@ -178,11 +178,11 @@ async function seed() {
       hasBoostedVisibility: true,
       isPopular: true,
       features: [
-        { label: "500 FCFA / livraison",       included: true },
-        { label: "Commandes prioritaires",     included: true },
-        { label: "Bonus performance",          included: true },
-        { label: "Statistiques revenus",       included: true },
-        { label: "Support dédié",              included: true },
+        { label: "500 FCFA / livraison",   included: true },
+        { label: "Commandes prioritaires", included: true },
+        { label: "Bonus performance",      included: true },
+        { label: "Statistiques revenus",   included: true },
+        { label: "Support dédié",          included: true },
       ],
     },
   ];
@@ -210,14 +210,14 @@ async function seed() {
   const adminId = createId();
   const hashedPassword = await bcrypt.hash("Admin@BEE2024!", 12);
 
-  const [existing] = await db
-    .select()
-    .from(users)
-    .where((u: any) => u.email.eq("admin@bee.cm"))
-    .limit(1)
-    .catch(() => []);
+  const existing = await db
+      .select()
+      .from(users)
+      .limit(1);
 
-  if (!existing) {
+  const adminExists = existing.some((u: any) => u.email === "admin@bee.cm");
+
+  if (!adminExists) {
     await db.insert(users).values({
       id:            adminId,
       name:          "Super Admin",
@@ -235,9 +235,9 @@ async function seed() {
       password:   hashedPassword,
     });
 
-    console.log("  ✅ Admin created: admin@bee.cm / Admin@BEE2024!\n");
+    console.log("  ✅ Admin: admin@bee.cm / Admin@BEE2024!\n");
   } else {
-    console.log("  ⏭️  Admin already exists, skipping\n");
+    console.log("  ⏭️  Admin already exists\n");
   }
 
   console.log("🎉 Seed complete!");
