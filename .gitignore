@@ -35,6 +35,7 @@ Thumbs.db
 
 # Drizzle
 drizzle/*.sql
+drizzle/
 
 # Misc
 *.log

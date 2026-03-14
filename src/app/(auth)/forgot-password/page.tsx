@@ -2,108 +2,54 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Mail, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ArrowLeft } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
+import { AuthFormWrapper, AuthInput, AuthSubmit } from "@/components/auth/auth-form";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [sent, setSent]         = useState(false);
-  const [error, setError]       = useState("");
+  const [email, setEmail]   = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent]     = useState(false);
+  const [error, setError]   = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
+    e.preventDefault(); setError(""); setLoading(true);
     try {
-      // better-auth handles this endpoint
       const res = await fetch("/api/auth/forget-password", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, redirectTo: "/reset-password" }),
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ email, redirectTo:"/reset-password" }),
       });
-
-      if (!res.ok) {
-        setError("Email introuvable. Vérifiez l'adresse saisie.");
-        return;
-      }
-
+      if (!res.ok) { setError("Email introuvable."); return; }
       setSent(true);
-    } catch {
-      setError("Erreur réseau. Réessayez.");
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError("Erreur réseau."); }
+    finally { setLoading(false); }
   };
 
-  return (
-    <div className="w-full max-w-sm animate-fade-up">
-      <div className="bg-white rounded-3xl shadow-soft-xl border border-border p-8 text-center">
-
-        <div className="w-14 h-14 rounded-2xl bg-honey-50 border-2 border-honey-200 mx-auto mb-5 flex items-center justify-center">
-          <span className="text-3xl">🔑</span>
-        </div>
-
-        {!sent ? (
-          <>
-            <h1 className="font-poppins font-bold text-xl text-foreground mb-2">
-              Mot de passe oublié ?
-            </h1>
-            <p className="text-sm text-muted-foreground font-inter mb-6">
-              Entrez votre email — on vous envoie un lien de réinitialisation.
-            </p>
-
-            {error && (
-              <Alert variant="error" className="mb-4 text-left" onClose={() => setError("")}>
-                {error}
-              </Alert>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4 text-left">
-              <Input
-                label="Adresse email"
-                type="email"
-                placeholder="votre@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                leftIcon={<Mail size={16} />}
-                required
-              />
-              <Button type="submit" fullWidth isLoading={loading}>
-                Envoyer le lien
-              </Button>
-            </form>
-          </>
-        ) : (
-          <>
-            <div className="w-16 h-16 rounded-full bg-success/10 mx-auto mb-4 flex items-center justify-center">
-              <span className="text-3xl">✅</span>
-            </div>
-            <h1 className="font-poppins font-bold text-xl text-foreground mb-2">
-              Email envoyé !
-            </h1>
-            <p className="text-sm text-muted-foreground font-inter mb-6">
-              Vérifiez votre boîte mail à{" "}
-              <span className="font-semibold text-foreground">{email}</span>.
-              Le lien est valide 1 heure.
-            </p>
-            <Alert variant="info" className="text-left mb-4">
-              Vérifiez aussi vos spams si vous ne trouvez pas l'email.
-            </Alert>
-          </>
-        )}
-
-        <Link
-          href="/sign-in"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-inter mt-4"
-        >
-          <ArrowLeft size={14} />
-          Retour à la connexion
+  if (sent) return (
+    <AuthFormWrapper label="Email envoyé" title="Vérifiez vos mails"
+      subtitle={`Un lien de réinitialisation a été envoyé à ${email}. Vérifiez vos spams.`}>
+      <div className="flex flex-col gap-3">
+        <Alert variant="info">Le lien est valide 1 heure.</Alert>
+        <Link href="/sign-in"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground font-inter transition-colors mt-2">
+          <ArrowLeft size={14}/> Retour à la connexion
         </Link>
       </div>
-    </div>
+    </AuthFormWrapper>
+  );
+
+  return (
+    <AuthFormWrapper label="Accès oublié" title="Réinitialiser"
+      subtitle={<span>Entrez votre email et recevez un lien pour créer un nouveau mot de passe.</span>}>
+      {error && <Alert variant="error" className="mb-4" onClose={() => setError("")}>{error}</Alert>}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <AuthInput label="Adresse email" type="email" placeholder="votre@email.com"
+          value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+        <div className="pt-1"><AuthSubmit label="Envoyer le lien" isLoading={loading} /></div>
+      </form>
+      <Link href="/sign-in" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground font-inter transition-colors mt-5">
+        <ArrowLeft size={14}/> Retour à la connexion
+      </Link>
+    </AuthFormWrapper>
   );
 }
