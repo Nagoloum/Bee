@@ -1,72 +1,14 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import { ChevronDown, Check } from "lucide-react";
 
-interface AuthFormWrapperProps {
-  children:    React.ReactNode;
-  title:       string;
-  subtitle?:   string;
-  label?:      string;          // e.g. "DÉMARRER GRATUITEMENT"
-  footer?:     React.ReactNode;
-  className?:  string;
-  maxWidth?:   string;
-}
-
-export function AuthFormWrapper({
-  children, title, subtitle, label, footer, className, maxWidth = "max-w-sm",
-}: AuthFormWrapperProps) {
-  return (
-    <div className={cn("w-full", maxWidth, className)}>
-
-      {/* Label (like "START FOR FREE") */}
-      {label && (
-        <p className="text-xs font-semibold font-poppins uppercase tracking-widest text-muted-foreground mb-3">
-          {label}
-        </p>
-      )}
-
-      {/* Title */}
-      <h1 className="font-poppins font-black text-3xl text-foreground mb-1 leading-tight">
-        {title}
-        <span className="text-primary">.</span>
-      </h1>
-
-      {/* Subtitle */}
-      {subtitle && (
-        <p className="text-sm text-muted-foreground font-inter mb-7">{subtitle}</p>
-      )}
-
-      {/* Form content */}
-      <div className={subtitle ? "" : "mt-7"}>
-        {children}
-      </div>
-
-      {/* Footer */}
-      {footer && (
-        <div className="mt-6">
-          {footer}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Divider ─────────────────────────────────────────────────────────────────
-
-export function AuthDivider({ label = "ou" }: { label?: string }) {
-  return (
-    <div className="flex items-center gap-3 my-5">
-      <div className="flex-1 h-px bg-border" />
-      <span className="text-xs text-muted-foreground font-inter">{label}</span>
-      <div className="flex-1 h-px bg-border" />
-    </div>
-  );
-}
-
-// ─── Google Button ────────────────────────────────────────────────────────────
+// ─── Google Icon ──────────────────────────────────────────────────────────────
 
 const GoogleIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24">
+  <svg width="16" height="16" viewBox="0 0 24 24" className="shrink-0">
     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -74,193 +16,308 @@ const GoogleIcon = () => (
   </svg>
 );
 
-interface GoogleButtonProps {
-  onClick:  () => void;
-  label?:   string;
+// ─── Wrapper ──────────────────────────────────────────────────────────────────
+
+interface AuthFormWrapperProps {
+  children:   React.ReactNode;
+  title:      string;
+  subtitle?:  React.ReactNode;
+  label?:     string;
+  maxWidth?:  string;
   className?: string;
 }
 
-export function GoogleButton({ onClick, label = "Continuer avec Google", className }: GoogleButtonProps) {
+export function AuthFormWrapper({ children, title, subtitle, label, maxWidth = "max-w-sm", className }: AuthFormWrapperProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "w-full flex items-center justify-center gap-3 h-11 rounded-2xl",
-        "border-2 border-border bg-white",
-        "font-poppins font-semibold text-sm text-foreground",
-        "hover:border-honey-300 hover:bg-honey-50/50 hover:-translate-y-0.5",
-        "transition-all duration-150 active:scale-[0.98]",
-        "dark:bg-ink-800 dark:border-ink-600 dark:text-white dark:hover:border-honey-400",
-        className
+    <div className={cn("w-full", maxWidth, className)}>
+      {label && (
+        <p className="text-[11px] font-bold font-poppins uppercase tracking-[0.15em] text-muted-foreground mb-3">
+          {label}
+        </p>
       )}
-    >
+      <h1 className="font-poppins font-black text-[2rem] text-foreground leading-tight mb-1">
+        {title}<span className="text-primary">.</span>
+      </h1>
+      {subtitle && (
+        <p className="text-sm text-muted-foreground font-inter mb-7 leading-relaxed">{subtitle}</p>
+      )}
+      <div className={subtitle ? "" : "mt-7"}>{children}</div>
+    </div>
+  );
+}
+
+// ─── Divider ──────────────────────────────────────────────────────────────────
+
+export function AuthDivider({ label = "ou" }: { label?: string }) {
+  return (
+    <div className="flex items-center gap-3 my-5">
+      <div className="flex-1 h-px bg-border" />
+      <span className="text-xs text-muted-foreground font-inter px-1">{label}</span>
+      <div className="flex-1 h-px bg-border" />
+    </div>
+  );
+}
+
+// ─── Google Button ────────────────────────────────────────────────────────────
+
+export function GoogleButton({ onClick, label = "Continuer avec Google" }: { onClick: () => void; label?: string }) {
+  return (
+    <button type="button" onClick={onClick}
+      className={cn(
+        "w-full flex items-center justify-center gap-3 h-12 rounded-2xl",
+        "bg-white border-2 border-border",
+        "font-poppins font-semibold text-sm text-foreground",
+        "hover:border-honey-300 hover:bg-honey-50/60 hover:-translate-y-0.5",
+        "transition-all duration-200 active:scale-[0.98] shadow-soft-sm"
+      )}>
       <GoogleIcon />
       {label}
     </button>
   );
 }
 
-// ─── Role selector tabs ───────────────────────────────────────────────────────
+// ─── Auth Input ───────────────────────────────────────────────────────────────
 
-interface RoleTabsProps {
-  current: "client" | "vendor" | "delivery";
-}
-
-const TABS = [
-  { key: "client",   label: "Client",  emoji: "🛍️", href: "/sign-up"          },
-  { key: "vendor",   label: "Vendeur", emoji: "🏪", href: "/sign-up/vendor"   },
-  { key: "delivery", label: "Livreur", emoji: "🛵", href: "/sign-up/delivery" },
-] as const;
-
-export function RoleTabs({ current }: RoleTabsProps) {
-  return (
-    <div className="flex gap-1 mb-7">
-      {TABS.map((tab) => {
-        const isActive = tab.key === current;
-        return isActive ? (
-          <button
-            key={tab.key}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-foreground text-background text-xs font-semibold font-poppins cursor-default"
-          >
-            <span>{tab.emoji}</span> {tab.label}
-          </button>
-        ) : (
-          <a
-            key={tab.key}
-            href={tab.href}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 text-xs font-semibold font-poppins transition-colors"
-          >
-            <span>{tab.emoji}</span> {tab.label}
-          </a>
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── Auth input (clean borderless style) ─────────────────────────────────────
-
-interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label:        string;
-  error?:       string;
+interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "placeholder"> {
+  label:         string;
+  icon:          React.ReactNode;
+  error?:        string;
+  optional?:     boolean;
   rightElement?: React.ReactNode;
+  hint?:         string;
 }
 
 export const AuthInput = React.forwardRef<HTMLInputElement, AuthInputProps>(
-  ({ label, error, rightElement, className, id, ...props }, ref) => {
-    const inputId = id ?? label.toLowerCase().replace(/\s+/g, "-");
+  ({ label, icon, error, optional, rightElement, hint, id, className, ...props }, ref) => {
+    const inputId = id ?? `auth-input-${label.toLowerCase().replace(/\s+/g, "-")}`;
+    const [focused, setFocused] = useState(false);
+    const [hasValue, setHasValue] = useState(!!props.value || !!props.defaultValue);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setHasValue(!!e.target.value);
+      props.onChange?.(e);
+    };
+
+    const isActive = focused || hasValue;
+
     return (
       <div className="flex flex-col gap-1">
         <div className={cn(
-          "relative flex items-center h-12 rounded-2xl border-2 bg-white transition-all duration-150",
-          "dark:bg-ink-800",
-          error
-            ? "border-error/50 focus-within:border-error"
-            : "border-border focus-within:border-foreground hover:border-border-strong",
-          className
+          "relative flex items-center h-14 rounded-2xl bg-white border-2 transition-all duration-200",
+          focused
+            ? "border-foreground shadow-soft-sm"
+            : error
+            ? "border-error/60"
+            : "border-border hover:border-border-strong",
         )}>
-          <div className="absolute left-0 px-4 pt-0 bottom-6 pointer-events-none">
-            <label htmlFor={inputId} className="text-[10px] font-semibold text-muted-foreground font-poppins uppercase tracking-wider">
-              {label}
-            </label>
+          {/* Icon */}
+          <div className={cn(
+            "absolute left-4 transition-all duration-200",
+            isActive ? "top-3 text-muted-foreground" : "top-1/2 -translate-y-1/2 text-muted-foreground",
+            focused && "text-foreground",
+            error && "text-error/70"
+          )}>
+            <span className="w-4 h-4 flex items-center">{icon}</span>
           </div>
+
+          {/* Floating label */}
+          <label htmlFor={inputId}
+            className={cn(
+              "absolute left-11 transition-all duration-200 pointer-events-none font-inter select-none",
+              isActive
+                ? "top-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
+                : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+            )}>
+            {label}
+            {optional && (
+              <span className={cn("ml-1 transition-all duration-200", isActive ? "opacity-100" : "opacity-0")}>
+                <span className="text-[9px] font-normal normal-case tracking-normal bg-muted text-muted-foreground px-1 py-0.5 rounded ml-1">
+                  optionnel
+                </span>
+              </span>
+            )}
+          </label>
+
+          {/* Input */}
           <input
             id={inputId}
             ref={ref}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onChange={handleChange}
             className={cn(
-              "w-full h-full pt-4 pb-1 px-4 bg-transparent",
-              "font-inter text-sm text-foreground dark:text-white",
-              "placeholder:text-transparent",
+              "absolute inset-0 w-full h-full bg-transparent",
+              "pl-11 pr-4 pb-2 pt-6",
+              "font-inter text-sm text-foreground",
               "focus:outline-none",
-              rightElement && "pr-12"
+              "placeholder:text-transparent",
+              rightElement && "pr-12",
+              className
             )}
+            placeholder=" "
             {...props}
           />
+
+          {/* Right element */}
           {rightElement && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
               {rightElement}
             </div>
           )}
         </div>
-        {error && (
-          <p className="text-xs text-error font-inter px-1">{error}</p>
-        )}
+        {error && <p className="text-xs text-error font-inter px-1 flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block"/>{error}</p>}
+        {hint && !error && <p className="text-xs text-muted-foreground font-inter px-1">{hint}</p>}
       </div>
     );
   }
 );
 AuthInput.displayName = "AuthInput";
 
-// ─── Auth select ──────────────────────────────────────────────────────────────
+// ─── Auth Select (fully custom, no native) ────────────────────────────────────
 
-interface AuthSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label:   string;
-  options: { value: string; label: string }[];
-  error?:  string;
+interface SelectOption { value: string; label: string; icon?: string }
+
+interface AuthSelectProps {
+  label:     string;
+  icon:      React.ReactNode;
+  options:   SelectOption[];
+  value?:    string;
+  onChange?: (value: string) => void;
+  error?:    string;
+  optional?: boolean;
+  required?: boolean;
 }
 
-export function AuthSelect({ label, options, error, id, className, ...props }: AuthSelectProps) {
-  const selectId = id ?? label.toLowerCase().replace(/\s+/g, "-");
+export function AuthSelect({ label, icon, options, value, onChange, error, optional, required }: AuthSelectProps) {
+  const [open, setOpen]   = useState(false);
+  const [focused, setFocused] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const selected = options.find(o => o.value === value);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) {
+        setOpen(false); setFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const isActive = !!selected || open;
+
   return (
     <div className="flex flex-col gap-1">
-      <div className={cn(
-        "relative h-12 rounded-2xl border-2 bg-white dark:bg-ink-800 transition-all",
-        error ? "border-error/50" : "border-border hover:border-border-strong focus-within:border-foreground",
-        className
-      )}>
-        <div className="absolute left-0 top-0 px-4 pt-1.5 pointer-events-none z-10">
-          <label htmlFor={selectId} className="text-[10px] font-semibold text-muted-foreground font-poppins uppercase tracking-wider">
+      <div ref={ref} className="relative">
+        {/* Trigger */}
+        <button
+          type="button"
+          onClick={() => { setOpen(!open); setFocused(!open); }}
+          className={cn(
+            "w-full relative flex items-center h-14 rounded-2xl bg-white border-2 transition-all duration-200 text-left",
+            open || focused
+              ? "border-foreground shadow-soft-sm"
+              : error
+              ? "border-error/60"
+              : "border-border hover:border-border-strong"
+          )}>
+          {/* Icon */}
+          <div className={cn(
+            "absolute left-4 transition-all duration-200 text-muted-foreground",
+            isActive ? "top-3" : "top-1/2 -translate-y-1/2"
+          )}>
+            <span className="w-4 h-4 flex items-center">{icon}</span>
+          </div>
+
+          {/* Floating label */}
+          <span className={cn(
+            "absolute left-11 transition-all duration-200 pointer-events-none font-inter",
+            isActive
+              ? "top-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
+              : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+          )}>
             {label}
-          </label>
-        </div>
-        <select
-          id={selectId}
-          className="w-full h-full pt-4 pb-1 px-4 bg-transparent font-inter text-sm text-foreground dark:text-white focus:outline-none appearance-none cursor-pointer"
-          {...props}
-        >
-          <option value=""></option>
-          {options.map(o => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+            {optional && isActive && (
+              <span className="ml-1 text-[9px] font-normal normal-case tracking-normal bg-muted text-muted-foreground px-1 py-0.5 rounded">
+                optionnel
+              </span>
+            )}
+          </span>
+
+          {/* Selected value */}
+          {selected && (
+            <span className="absolute left-11 bottom-2.5 text-sm font-inter text-foreground font-medium">
+              {selected.icon && <span className="mr-1.5">{selected.icon}</span>}
+              {selected.label}
+            </span>
+          )}
+
+          {/* Chevron */}
+          <ChevronDown
+            size={16}
+            className={cn(
+              "absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-transform duration-200",
+              open && "rotate-180"
+            )}
+          />
+        </button>
+
+        {/* Dropdown */}
+        {open && (
+          <div className={cn(
+            "absolute z-50 w-full mt-1.5 bg-white rounded-2xl border-2 border-border shadow-soft-lg overflow-hidden",
+            "animate-scale-in origin-top"
+          )}>
+            <div className="max-h-52 overflow-y-auto py-1.5 scrollbar-hide">
+              {options.map(opt => {
+                const isSelected = opt.value === value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => { onChange?.(opt.value); setOpen(false); setFocused(false); }}
+                    className={cn(
+                      "w-full flex items-center justify-between px-4 py-2.5 text-sm font-inter transition-colors text-left",
+                      isSelected
+                        ? "bg-primary/8 text-primary font-semibold"
+                        : "text-foreground hover:bg-muted"
+                    )}>
+                    <span className="flex items-center gap-2">
+                      {opt.icon && <span>{opt.icon}</span>}
+                      {opt.label}
+                    </span>
+                    {isSelected && <Check size={14} className="text-primary shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
-      {error && <p className="text-xs text-error font-inter px-1">{error}</p>}
+      {error && <p className="text-xs text-error font-inter px-1 flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block"/>{error}</p>}
     </div>
   );
 }
 
-// ─── Submit button ────────────────────────────────────────────────────────────
+// ─── Submit Button ────────────────────────────────────────────────────────────
 
-interface AuthSubmitProps {
-  label:      string;
-  isLoading?: boolean;
-  variant?:   "primary" | "secondary";
-}
-
-export function AuthSubmit({ label, isLoading, variant = "primary" }: AuthSubmitProps) {
+export function AuthSubmit({ label, isLoading, variant = "primary" }: { label: string; isLoading?: boolean; variant?: "primary" | "secondary" }) {
   return (
-    <button
-      type="submit"
-      disabled={isLoading}
+    <button type="submit" disabled={isLoading}
       className={cn(
-        "w-full h-12 rounded-2xl font-poppins font-bold text-sm transition-all duration-150",
-        "disabled:opacity-60 disabled:pointer-events-none",
+        "w-full h-12 rounded-2xl font-poppins font-bold text-sm",
+        "transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none",
         "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]",
         variant === "primary"
           ? "bg-primary text-white shadow-honey hover:bg-primary-hover hover:shadow-honey-lg"
-          : "bg-secondary text-white hover:bg-secondary-hover"
-      )}
-    >
+          : "bg-secondary text-white hover:bg-secondary-hover shadow-soft"
+      )}>
       {isLoading ? (
         <span className="flex items-center justify-center gap-2">
           <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.3"/>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25"/>
             <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
           </svg>
           Traitement…
