@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useId } from "react";
 import Link from "next/link";
+import { Eye, EyeOff, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { ChevronDown, Check } from "lucide-react";
 
 // ─── Google Icon ──────────────────────────────────────────────────────────────
 
@@ -18,16 +18,12 @@ const GoogleIcon = () => (
 
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
 
-interface AuthFormWrapperProps {
-  children:   React.ReactNode;
-  title:      string;
-  subtitle?:  React.ReactNode;
-  label?:     string;
-  maxWidth?:  string;
-  className?: string;
-}
-
-export function AuthFormWrapper({ children, title, subtitle, label, maxWidth = "max-w-sm", className }: AuthFormWrapperProps) {
+export function AuthFormWrapper({
+  children, title, subtitle, label, maxWidth = "max-w-sm", className,
+}: {
+  children: React.ReactNode; title: string; subtitle?: React.ReactNode;
+  label?: string; maxWidth?: string; className?: string;
+}) {
   return (
     <div className={cn("w-full", maxWidth, className)}>
       {label && (
@@ -60,14 +56,16 @@ export function AuthDivider({ label = "ou" }: { label?: string }) {
 
 // ─── Google Button ────────────────────────────────────────────────────────────
 
-export function GoogleButton({ onClick, label = "Continuer avec Google" }: { onClick: () => void; label?: string }) {
+export function GoogleButton({
+  onClick, label = "Continuer avec Google",
+}: { onClick: () => void; label?: string }) {
   return (
     <button type="button" onClick={onClick}
       className={cn(
         "w-full flex items-center justify-center gap-3 h-12 rounded-2xl",
         "bg-white border-2 border-border",
         "font-poppins font-semibold text-sm text-foreground",
-        "hover:border-honey-300 hover:bg-honey-50/60 hover:-translate-y-0.5",
+        "hover:border-honey-300 hover:bg-honey-50/60",
         "transition-all duration-200 active:scale-[0.98] shadow-soft-sm"
       )}>
       <GoogleIcon />
@@ -77,103 +75,127 @@ export function GoogleButton({ onClick, label = "Continuer avec Google" }: { onC
 }
 
 // ─── Auth Input ───────────────────────────────────────────────────────────────
+// Uses CSS peer + :not(:placeholder-shown) for floating label
+// Handles autofill correctly without JS state
+// Manages its own password visibility if type="password"
 
 interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "placeholder"> {
-  label:         string;
-  icon:          React.ReactNode;
-  error?:        string;
-  optional?:     boolean;
+  label:      string;
+  icon:       React.ReactNode;
+  error?:     string;
+  optional?:  boolean;
+  hint?:      string;
+  // rightElement is kept for non-password use cases
   rightElement?: React.ReactNode;
-  hint?:         string;
 }
 
 export const AuthInput = React.forwardRef<HTMLInputElement, AuthInputProps>(
-  ({ label, icon, error, optional, rightElement, hint, id, className, ...props }, ref) => {
-    const inputId = id ?? `auth-input-${label.toLowerCase().replace(/\s+/g, "-")}`;
-    const [focused, setFocused] = useState(false);
-    const [hasValue, setHasValue] = useState(!!props.value || !!props.defaultValue);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setHasValue(!!e.target.value);
-      props.onChange?.(e);
-    };
-
-    const isActive = focused || hasValue;
+  ({ label, icon, error, optional, hint, id, className, type, rightElement, ...props }, ref) => {
+    const uid = useId();
+    const inputId = id ?? `auth-${label.toLowerCase().replace(/\s+/g, "-")}-${uid.replace(/[:]+/g, "")}`;
+    const isPassword   = type === "password";
+    const [showPw, setShowPw] = useState(false);
+    const inputType    = isPassword ? (showPw ? "text" : "password") : type;
 
     return (
       <div className="flex flex-col gap-1">
         <div className={cn(
           "relative flex items-center h-14 rounded-2xl bg-white border-2 transition-all duration-200",
-          focused
-            ? "border-foreground shadow-soft-sm"
-            : error
-            ? "border-error/60"
-            : "border-border hover:border-border-strong",
+          error ? "border-error/60" : "border-border hover:border-border-strong",
+          // focus-within handled by CSS
+          "focus-within:border-foreground focus-within:shadow-soft-sm"
         )}>
-          {/* Icon */}
-          <div className={cn(
-            "absolute left-4 transition-all duration-200",
-            isActive ? "top-3 text-muted-foreground" : "top-1/2 -translate-y-1/2 text-muted-foreground",
-            focused && "text-foreground",
-            error && "text-error/70"
-          )}>
-            <span className="w-4 h-4 flex items-center">{icon}</span>
+          {/* Icône — reste en bas au centre par défaut, monte quand actif */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none
+            peer-focus:top-4 peer-focus:translate-y-0 transition-all duration-200">
+            {/* On garde l'icône fixe, elle reste centrée verticalement */}
+            <span className="w-4 h-4 flex items-center text-muted-foreground">{icon}</span>
           </div>
 
-          {/* Floating label */}
-          <label htmlFor={inputId}
+          {/* Input — peer pour déclencher le floating label via CSS */}
+          <input
+            id={inputId}
+            ref={ref}
+            type={inputType}
+            placeholder=" " /* espace requis pour :not(:placeholder-shown) */
             className={cn(
-              "absolute left-11 transition-all duration-200 pointer-events-none font-inter select-none",
-              isActive
-                ? "top-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
-                : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+              "peer w-full h-full bg-transparent",
+              "pl-11 pb-2 pt-6 pr-4",
+              "font-inter text-sm text-foreground",
+              "focus:outline-none",
+              // Override autofill webkit background
+              "[&:-webkit-autofill]:[-webkit-box-shadow:0_0_0px_1000px_white_inset]",
+              "[&:-webkit-autofill]:[-webkit-text-fill-color:#1A1A2E]",
+              "[&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]",
+              (isPassword || rightElement) && "pr-12",
+              className
+            )}
+            {...props}
+          />
+
+          {/* Floating label — monte quand focus OU quand input a une valeur OU autofill */}
+          <label
+            htmlFor={inputId}
+            className={cn(
+              "absolute left-11 pointer-events-none font-inter select-none transition-all duration-200",
+              // État repos : centré verticalement, taille normale
+              "top-1/2 -translate-y-1/2 text-sm text-muted-foreground",
+              // État actif (focus ou valeur) via peer
+              "peer-focus:top-2.5 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:font-semibold peer-focus:tracking-wider peer-focus:uppercase peer-focus:text-muted-foreground",
+              "peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-semibold peer-[:not(:placeholder-shown)]:tracking-wider peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:text-muted-foreground",
+              // Autofill webkit
+              "peer-autofill:top-2.5 peer-autofill:translate-y-0 peer-autofill:text-[10px] peer-autofill:font-semibold peer-autofill:tracking-wider peer-autofill:uppercase",
             )}>
             {label}
             {optional && (
-              <span className={cn("ml-1 transition-all duration-200", isActive ? "opacity-100" : "opacity-0")}>
-                <span className="text-[9px] font-normal normal-case tracking-normal bg-muted text-muted-foreground px-1 py-0.5 rounded ml-1">
-                  optionnel
-                </span>
+              <span className={cn(
+                "ml-1.5 text-[9px] font-normal normal-case tracking-normal",
+                "bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md",
+                "opacity-0 transition-opacity duration-200",
+                "peer-focus:opacity-100 peer-[:not(:placeholder-shown)]:opacity-100",
+              )}>
+                optionnel
               </span>
             )}
           </label>
 
-          {/* Input */}
-          <input
-            id={inputId}
-            ref={ref}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            onChange={handleChange}
-            className={cn(
-              "absolute inset-0 w-full h-full bg-transparent",
-              "pl-11 pr-4 pb-2 pt-6",
-              "font-inter text-sm text-foreground",
-              "focus:outline-none",
-              "placeholder:text-transparent",
-              rightElement && "pr-12",
-              className
-            )}
-            placeholder=" "
-            {...props}
-          />
+          {/* Bouton œil — uniquement pour les champs password, géré en interne */}
+          {isPassword && (
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowPw((v) => !v)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-lg p-1 z-10"
+              aria-label={showPw ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            >
+              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          )}
 
-          {/* Right element */}
-          {rightElement && (
+          {/* rightElement pour les autres cas (ex: bouton externe) */}
+          {!isPassword && rightElement && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
               {rightElement}
             </div>
           )}
         </div>
-        {error && <p className="text-xs text-error font-inter px-1 flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block"/>{error}</p>}
-        {hint && !error && <p className="text-xs text-muted-foreground font-inter px-1">{hint}</p>}
+
+        {error && (
+          <p className="text-xs text-error font-inter px-1 flex items-center gap-1">
+            <span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block" />
+            {error}
+          </p>
+        )}
+        {hint && !error && (
+          <p className="text-xs text-muted-foreground font-inter px-1">{hint}</p>
+        )}
       </div>
     );
   }
 );
 AuthInput.displayName = "AuthInput";
 
-// ─── Auth Select (fully custom, no native) ────────────────────────────────────
+// ─── Auth Select (100% custom) ────────────────────────────────────────────────
 
 interface SelectOption { value: string; label: string; icon?: string }
 
@@ -188,68 +210,61 @@ interface AuthSelectProps {
   required?: boolean;
 }
 
-export function AuthSelect({ label, icon, options, value, onChange, error, optional, required }: AuthSelectProps) {
-  const [open, setOpen]   = useState(false);
-  const [focused, setFocused] = useState(false);
+export function AuthSelect({
+  label, icon, options, value, onChange, error, optional, required,
+}: AuthSelectProps) {
+  const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const selected = options.find((o) => o.value === value);
+  const isActive = !!selected || open;
 
-  const selected = options.find(o => o.value === value);
-
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) {
-        setOpen(false); setFocused(false);
-      }
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const isActive = !!selected || open;
-
   return (
     <div className="flex flex-col gap-1">
       <div ref={ref} className="relative">
-        {/* Trigger */}
         <button
           type="button"
-          onClick={() => { setOpen(!open); setFocused(!open); }}
+          onClick={() => setOpen(!open)}
           className={cn(
             "w-full relative flex items-center h-14 rounded-2xl bg-white border-2 transition-all duration-200 text-left",
-            open || focused
+            open
               ? "border-foreground shadow-soft-sm"
               : error
               ? "border-error/60"
               : "border-border hover:border-border-strong"
           )}>
-          {/* Icon */}
-          <div className={cn(
-            "absolute left-4 transition-all duration-200 text-muted-foreground",
-            isActive ? "top-3" : "top-1/2 -translate-y-1/2"
-          )}>
+
+          {/* Icône fixe à gauche */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
             <span className="w-4 h-4 flex items-center">{icon}</span>
           </div>
 
-          {/* Floating label */}
+          {/* Label flottant */}
           <span className={cn(
-            "absolute left-11 transition-all duration-200 pointer-events-none font-inter",
+            "absolute left-11 pointer-events-none font-inter transition-all duration-200 select-none",
             isActive
               ? "top-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider"
               : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
           )}>
             {label}
             {optional && isActive && (
-              <span className="ml-1 text-[9px] font-normal normal-case tracking-normal bg-muted text-muted-foreground px-1 py-0.5 rounded">
+              <span className="ml-1.5 text-[9px] font-normal normal-case tracking-normal bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md">
                 optionnel
               </span>
             )}
           </span>
 
-          {/* Selected value */}
+          {/* Valeur sélectionnée */}
           {selected && (
-            <span className="absolute left-11 bottom-2.5 text-sm font-inter text-foreground font-medium">
-              {selected.icon && <span className="mr-1.5">{selected.icon}</span>}
+            <span className="absolute left-11 bottom-2.5 text-sm font-inter text-foreground font-medium flex items-center gap-1.5">
+              {selected.icon && <span className="text-base leading-none">{selected.icon}</span>}
               {selected.label}
             </span>
           )}
@@ -266,29 +281,26 @@ export function AuthSelect({ label, icon, options, value, onChange, error, optio
 
         {/* Dropdown */}
         {open && (
-          <div className={cn(
-            "absolute z-50 w-full mt-1.5 bg-white rounded-2xl border-2 border-border shadow-soft-lg overflow-hidden",
-            "animate-scale-in origin-top"
-          )}>
+          <div className="absolute z-50 w-full mt-1.5 bg-white rounded-2xl border-2 border-border shadow-soft-lg overflow-hidden animate-scale-in origin-top">
             <div className="max-h-52 overflow-y-auto py-1.5 scrollbar-hide">
-              {options.map(opt => {
-                const isSelected = opt.value === value;
+              {options.map((opt) => {
+                const isSel = opt.value === value;
                 return (
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => { onChange?.(opt.value); setOpen(false); setFocused(false); }}
+                    onClick={() => { onChange?.(opt.value); setOpen(false); }}
                     className={cn(
                       "w-full flex items-center justify-between px-4 py-2.5 text-sm font-inter transition-colors text-left",
-                      isSelected
+                      isSel
                         ? "bg-primary/8 text-primary font-semibold"
                         : "text-foreground hover:bg-muted"
                     )}>
-                    <span className="flex items-center gap-2">
-                      {opt.icon && <span>{opt.icon}</span>}
+                    <span className="flex items-center gap-2.5">
+                      {opt.icon && <span className="text-base leading-none">{opt.icon}</span>}
                       {opt.label}
                     </span>
-                    {isSelected && <Check size={14} className="text-primary shrink-0" />}
+                    {isSel && <Check size={14} className="text-primary shrink-0" />}
                   </button>
                 );
               })}
@@ -296,20 +308,30 @@ export function AuthSelect({ label, icon, options, value, onChange, error, optio
           </div>
         )}
       </div>
-      {error && <p className="text-xs text-error font-inter px-1 flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block"/>{error}</p>}
+
+      {error && (
+        <p className="text-xs text-error font-inter px-1 flex items-center gap-1">
+          <span className="w-1 h-1 rounded-full bg-error shrink-0 inline-block" />
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
 // ─── Submit Button ────────────────────────────────────────────────────────────
 
-export function AuthSubmit({ label, isLoading, variant = "primary" }: { label: string; isLoading?: boolean; variant?: "primary" | "secondary" }) {
+export function AuthSubmit({
+  label, isLoading, variant = "primary",
+}: { label: string; isLoading?: boolean; variant?: "primary" | "secondary" }) {
   return (
-    <button type="submit" disabled={isLoading}
+    <button
+      type="submit"
+      disabled={isLoading}
       className={cn(
         "w-full h-12 rounded-2xl font-poppins font-bold text-sm",
         "transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none",
-        "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]",
+        "hover:-translate-y-0.5 active:scale-[0.99]",
         variant === "primary"
           ? "bg-primary text-white shadow-honey hover:bg-primary-hover hover:shadow-honey-lg"
           : "bg-secondary text-white hover:bg-secondary-hover shadow-soft"

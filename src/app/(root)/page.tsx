@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils/cn";
 import * as LucideIcons from "lucide-react";
+import { PromoBannerCarousel } from "@/components/storefront/promo-carousel";
 
 export const revalidate = 60;
 
@@ -58,7 +59,7 @@ export default async function HomePage() {
               Des milliers de produits auprès des meilleurs vendeurs du Cameroun. Paiement sécurisé, livraison rapide.
             </p>
             <div className="flex flex-wrap gap-3 animate-fade-up">
-              <Link href="/products" className="inline-flex items-center gap-2 h-12 px-7 rounded-2xl bg-primary text-white font-poppins font-bold hover:bg-primary-hover hover:-translate-y-0.5 transition-all shadow-honey hover:shadow-honey-lg">
+              <Link href="/products" className="inline-flex items-center gap-2 h-12 px-7 rounded-2xl bg-primary text-white font-poppins font-bold hover:bg-primary-hover transition-all shadow-honey hover:shadow-honey-lg">
                 Explorer le catalogue <ArrowRight size={18} />
               </Link>
               <Link href="/sign-up/vendor" className="inline-flex items-center gap-2 h-12 px-7 rounded-2xl bg-white/10 text-white border border-white/20 font-poppins font-semibold hover:bg-white/20 transition-all">
@@ -106,20 +107,45 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── PROMO CAROUSEL ───────────────────────────────────────────────────── */}
+      <PromoBannerCarousel />
+
       {/* ── CATEGORIES ────────────────────────────────────────────────────────── */}
       <section className="container-bee section-bee">
-        <SectionHeader title="Catégories populaires" subtitle="Explorez par univers" href="/products" badge="🗂️ Catalogue" />
+        <SectionHeader title="Catégories populaires" subtitle="Explorez par univers" href="/categories" badge="🗂️ Voir tout" />
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {featuredCats.map((cat) => {
             const IconComp = (LucideIcons as any)[cat.icon ?? "Package"];
+            const PLACEHOLDERS: Record<string, string> = {
+              electronique: "https://picsum.photos/seed/electronique/400/300",
+              mode:         "https://picsum.photos/seed/mode-fashion/400/300",
+              maison:       "https://picsum.photos/seed/maison-cuisine/400/300",
+              beaute:       "https://picsum.photos/seed/beaute-sante/400/300",
+              alimentation: "https://picsum.photos/seed/alimentation-cm/400/300",
+              sport:        "https://picsum.photos/seed/sport-loisirs/400/300",
+              artisanat:    "https://picsum.photos/seed/artisanat-cm/400/300",
+              informatique: "https://picsum.photos/seed/informatique/400/300",
+            };
+            const image = cat.image ?? PLACEHOLDERS[cat.slug];
             return (
               <Link key={cat.id} href={`/products?category=${cat.slug}`}
-                className="group flex flex-col items-center gap-2.5 p-4 rounded-2xl bg-white border border-border hover:border-honey-300 hover:-translate-y-1 hover:shadow-honey transition-all duration-200">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: `${cat.color}18` }}>
-                  {IconComp ? <IconComp size={22} style={{ color: cat.color }} /> : <span className="text-xl">📦</span>}
+                className="group relative overflow-hidden rounded-2xl border border-border hover:border-honey-300 hover:shadow-honey transition-all duration-200 aspect-square flex flex-col justify-end">
+                {image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={image} alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white"
+                    style={{ backgroundColor: `${cat.color}18` }}>
+                    {IconComp ? <IconComp size={28} style={{ color: cat.color }} /> : <span className="text-2xl">📦</span>}
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                <div className="relative px-2.5 pb-2.5">
+                  <span className="block text-xs font-bold font-poppins text-white leading-tight text-center">
+                    {cat.name}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold font-poppins text-foreground text-center leading-tight">{cat.name}</span>
               </Link>
             );
           })}
@@ -152,7 +178,7 @@ export default async function HomePage() {
               <h2 className="font-poppins font-black text-3xl md:text-4xl mb-2">Jusqu'à <span className="text-yellow-300">-50%</span></h2>
               <p className="font-inter opacity-80 text-sm">Offres limitées · Stocks limités · Chaque jour</p>
             </div>
-            <Link href="/flash-sales" className="shrink-0 inline-flex items-center gap-2 h-12 px-8 rounded-2xl bg-white text-red-600 font-poppins font-bold hover:-translate-y-0.5 transition-all shadow-xl">
+            <Link href="/flash-sales" className="shrink-0 inline-flex items-center gap-2 h-12 px-8 rounded-2xl bg-white text-red-600 font-poppins font-bold transition-all shadow-xl">
               <Zap size={16} className="fill-current" /> Voir les offres flash
             </Link>
           </div>

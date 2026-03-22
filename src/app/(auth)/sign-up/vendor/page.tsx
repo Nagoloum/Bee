@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Phone, Lock, Eye, EyeOff, Store, Globe, MapPin } from "lucide-react";
+import { User, Mail, Phone, Lock, Store, Globe, MapPin } from "lucide-react";
 import { signUp } from "@/lib/auth/client";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,6 @@ const REGIONS = [
 export default function VendorSignUpPage() {
   const router = useRouter();
   const [step, setStep]       = useState<"form" | "otp">("form");
-  const [showPw, setShowPw]   = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [form, setForm]       = useState({
@@ -71,12 +70,6 @@ export default function VendorSignUpPage() {
       onBack={() => setStep("form")} />
   );
 
-  const pwIcon = (
-    <button type="button" onClick={() => setShowPw(!showPw)} className="p-1 hover:text-foreground transition-colors rounded-lg">
-      {showPw ? <EyeOff size={15}/> : <Eye size={15}/>}
-    </button>
-  );
-
   return (
     <AuthFormWrapper label="Vendre sur BEE" title="Ouvrir ma boutique" maxWidth="max-w-md"
       subtitle={
@@ -104,11 +97,11 @@ export default function VendorSignUpPage() {
 
         <div className="grid grid-cols-2 gap-3">
           <AuthInput label="Mot de passe" icon={<Lock size={16}/>}
-            type={showPw ? "text" : "password"}
+            type="password"
             value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required autoComplete="new-password" rightElement={pwIcon} />
+            required autoComplete="new-password" />
           <AuthInput label="Confirmer" icon={<Lock size={16}/>}
-            type={showPw ? "text" : "password"}
+            type="password"
             value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
             required autoComplete="new-password" />
         </div>

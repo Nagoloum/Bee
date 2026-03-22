@@ -1,21 +1,25 @@
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/helpers";
+import { getAdminStats, getAdminOrders, getAdminUsers } from "@/lib/actions/admin";
+import { AdminDashboardClient } from "@/components/admin/admin-dashboard-client";
+
+export const revalidate = 30;
 
 export default async function AdminDashboardPage() {
   const session = await requireRole(["ADMIN"]);
-  if (!session) redirect("/sign-in?callbackUrl=/admin");
+  if (!session) redirect("/sign-in");
+
+  const [stats, recentOrders, recentUsers] = await Promise.all([
+    getAdminStats(),
+    getAdminOrders(undefined, 8),
+    getAdminUsers(undefined, undefined, 6),
+  ]);
 
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto text-center py-16">
-        <div className="text-6xl mb-4">👑</div>
-        <h1 className="font-poppins font-bold text-2xl text-white mb-2">
-          Admin Panel
-        </h1>
-        <p className="text-white/60 font-inter">
-          Bonjour {(session.user as any).name} — Phase 8 à venir
-        </p>
-      </div>
-    </div>
+    <AdminDashboardClient
+      stats={stats}
+      recentOrders={recentOrders as any}
+      recentUsers={recentUsers as any}
+    />
   );
 }

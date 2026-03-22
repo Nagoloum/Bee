@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth/client";
 import { Alert } from "@/components/ui/alert";
 import {
@@ -15,7 +15,6 @@ import { OTPStep } from "@/components/auth/otp-step";
 export default function SignUpClientPage() {
   const router = useRouter();
   const [step, setStep]       = useState<"form" | "otp">("form");
-  const [showPw, setShowPw]   = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [form, setForm]       = useState({
@@ -45,13 +44,6 @@ export default function SignUpClientPage() {
     <OTPStep phone="" onSuccess={() => { router.push("/"); router.refresh(); }} onBack={() => setStep("form")} />
   );
 
-  const pwIcon = (
-    <button type="button" onClick={() => setShowPw(!showPw)}
-      className="p-1 hover:text-foreground transition-colors rounded-lg">
-      {showPw ? <EyeOff size={15}/> : <Eye size={15}/>}
-    </button>
-  );
-
   return (
     <AuthFormWrapper label="Démarrer gratuitement" title="Créer un compte"
       subtitle={<span>Déjà membre ? <Link href="/sign-in" className="text-primary font-semibold hover:underline">Se connecter</Link></span>}>
@@ -79,12 +71,12 @@ export default function SignUpClientPage() {
         {/* Les deux mots de passe côte à côte */}
         <div className="grid grid-cols-2 gap-3">
           <AuthInput label="Mot de passe" icon={<Lock size={16}/>}
-            type={showPw ? "text" : "password"}
+            type="password"
             value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required autoComplete="new-password" rightElement={pwIcon}
+            required autoComplete="new-password"
             hint="8 caractères min." />
           <AuthInput label="Confirmer" icon={<Lock size={16}/>}
-            type={showPw ? "text" : "password"}
+            type="password"
             value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
             required autoComplete="new-password" />
         </div>

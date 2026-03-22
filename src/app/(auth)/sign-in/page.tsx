@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { signIn } from "@/lib/auth/client";
 import { Alert } from "@/components/ui/alert";
 import {
@@ -13,7 +13,6 @@ import {
 
 export default function SignInPage() {
   const router = useRouter();
-  const [showPw, setShowPw]   = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [form, setForm]       = useState({ email: "", password: "" });
@@ -31,37 +30,60 @@ export default function SignInPage() {
   };
 
   return (
-    <AuthFormWrapper label="Bon retour" title="Connexion"
-      subtitle={<span>Pas encore de compte ? <Link href="/sign-up" className="text-primary font-semibold hover:underline">S'inscrire gratuitement</Link></span>}>
-
+    <AuthFormWrapper
+      label="Bon retour"
+      title="Connexion"
+      subtitle={
+        <span>
+          Pas encore de compte ?{" "}
+          <Link href="/sign-up" className="text-primary font-semibold hover:underline">
+            S'inscrire gratuitement
+          </Link>
+        </span>
+      }
+    >
       <GoogleButton onClick={() => signIn.social({ provider: "google", callbackURL: "/" })} />
       <AuthDivider />
 
-      {error && <Alert variant="error" className="mb-4" onClose={() => setError("")}>{error}</Alert>}
+      {error && (
+        <Alert variant="error" className="mb-4" onClose={() => setError("")}>
+          {error}
+        </Alert>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-3">
-        <AuthInput label="Adresse email" icon={<Mail size={16}/>} type="email"
-          value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required autoComplete="email" />
+        <AuthInput
+          label="Adresse email"
+          icon={<Mail size={16} />}
+          type="email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+          autoComplete="email"
+        />
 
-        <AuthInput label="Mot de passe" icon={<Lock size={16}/>}
-          type={showPw ? "text" : "password"}
-          value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required autoComplete="current-password"
-          rightElement={
-            <button type="button" onClick={() => setShowPw(!showPw)}
-              className="p-1 hover:text-foreground transition-colors rounded-lg">
-              {showPw ? <EyeOff size={15}/> : <Eye size={15}/>}
-            </button>
-          } />
+        <AuthInput
+          label="Mot de passe"
+          icon={<Lock size={16} />}
+          type="password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+          autoComplete="current-password"
+        />
 
         <div className="flex justify-end">
-          <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary transition-colors font-inter">
+          <Link
+            href="/forgot-password"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors font-inter"
+          >
             Mot de passe oublié ?
           </Link>
         </div>
 
-        <div className="pt-1"><AuthSubmit label="Se connecter" isLoading={loading} /></div>
+        <div className="pt-1">
+          <AuthSubmit label="Se connecter" isLoading={loading} />
+        </div>
       </form>
 
       <div className="mt-6 pt-5 border-t border-border flex items-center justify-center gap-5 text-xs text-muted-foreground font-inter">

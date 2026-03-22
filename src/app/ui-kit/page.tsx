@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Search, Mail, Phone, Star, Zap, ShoppingCart, Heart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input, Textarea, Select } from "@/components/ui/input";
+import { Input, Textarea } from "@/components/ui/input"
+import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarGroup } from "@/components/ui/avatar";

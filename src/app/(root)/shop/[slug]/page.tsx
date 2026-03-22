@@ -45,12 +45,19 @@ export default async function ShopPage({ params }: { params: { slug: string } })
       </div>
 
       {/* Banner */}
-      <div className="relative bg-ink-gradient h-40 md:h-52 overflow-hidden">
+      <div className="relative h-40 md:h-52 overflow-hidden">
         {vendor.banner ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={vendor.banner} alt="" className="w-full h-full object-cover" />
+          <img src={vendor.banner} alt={vendor.shopName} className="w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0 bg-dots-pattern opacity-20" />
+          <div
+            className="w-full h-full"
+            style={{
+              background: `linear-gradient(135deg, hsl(${(vendor.shopName.charCodeAt(0) * 137) % 360}, 60%, 35%) 0%, hsl(${(vendor.shopName.charCodeAt(0) * 137 + 60) % 360}, 50%, 25%) 100%)`,
+            }}
+          >
+            <div className="absolute inset-0 bg-dots-pattern opacity-10" />
+          </div>
         )}
       </div>
 

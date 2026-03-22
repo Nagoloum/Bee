@@ -17,8 +17,8 @@ const cardVariants = cva(
       },
       hover: {
         default: "",
-        lift:    "hover:-translate-y-1 hover:shadow-soft-md cursor-pointer",
-        scale:   "hover:scale-[1.02] cursor-pointer",
+        lift:    "hover:shadow-soft-md cursor-pointer",
+        scale:   "cursor-pointer",
         border:  "hover:border-primary cursor-pointer",
         glow:    "hover:shadow-glow cursor-pointer",
       },

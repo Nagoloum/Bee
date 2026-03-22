@@ -19,7 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 const navLinks = [
   { href: "/",            label: "Accueil"              },
   { href: "/products",    label: "Catalogue"            },
-  { href: "/shops",       label: "Boutiques"            },
+  { href: "/shops",        label: "Boutiques"            },
   { href: "/flash-sales", label: "⚡ Flash", highlight: true },
 ];
 
@@ -103,7 +103,7 @@ export function Navbar() {
 
             {/* Cart */}
             <Button variant="ghost" size="icon" className="relative" asChild>
-              <Link href="/cart">
+              <Link href="/cart" aria-label="Panier">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center">

@@ -7,3 +7,6 @@ export * from "./spinner";
 export * from "./modal";
 export * from "./alert";
 export * from "./rating";
+
+export * from "./select";
+export * from "./image-upload";

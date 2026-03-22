@@ -6,10 +6,10 @@ const footerLinks = {
   shop: {
     title: "Boutique",
     links: [
-      { href:"/products",    label:"Tous les produits"   },
-      { href:"/flash-sales", label:"Ventes Flash ⚡"     },
-      { href:"/shops",       label:"Boutiques"           },
-      { href:"/categories",  label:"Catégories"          },
+      { href:"/products",    label:"Tous les produits" },
+      { href:"/flash-sales", label:"Ventes Flash ⚡"   },
+      { href:"/shops",       label:"Boutiques"         },
+      { href:"/categories",  label:"Catégories"        },
     ],
   },
   partner: {
@@ -17,26 +17,26 @@ const footerLinks = {
     links: [
       { href:"/sign-up/vendor",   label:"🏪 Ouvrir une boutique" },
       { href:"/sign-up/delivery", label:"🛵 Devenir livreur"     },
-      { href:"/pricing",          label:"Nos offres"              },
-      { href:"/affiliate",        label:"Affiliation"             },
+      { href:"/pricing",          label:"Nos tarifs"             },
+      { href:"/affiliate",        label:"Affiliation & parrainage"},
     ],
   },
   company: {
     title: "BEE",
     links: [
-      { href:"/about",   label:"À propos"  },
-      { href:"/blog",    label:"Blog"      },
-      { href:"/careers", label:"Carrières" },
-      { href:"/contact", label:"Contact"   },
+      { href:"/about",    label:"À propos"   },
+      { href:"/blog",     label:"Blog"       },
+      { href:"/careers",  label:"Carrières"  },
+      { href:"/contact",  label:"Contact"    },
     ],
   },
   legal: {
     title: "Légal",
     links: [
-      { href:"/legal/cgu",      label:"CGU"                     },
-      { href:"/legal/privacy",  label:"Confidentialité"         },
-      { href:"/legal/mentions", label:"Mentions légales"        },
-      { href:"/legal/cookies",  label:"Cookies"                 },
+      { href:"/legal/cgu",      label:"CGU"               },
+      { href:"/legal/privacy",  label:"Confidentialité"   },
+      { href:"/legal/mentions", label:"Mentions légales"  },
+      { href:"/legal/cookies",  label:"Cookies"           },
     ],
   },
 };
@@ -48,7 +48,6 @@ const socialLinks = [
   { href:"https://youtube.com",   label:"YouTube",   Icon: Youtube   },
 ];
 
-// App store SVG icons (simplified)
 function AppleIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -56,6 +55,7 @@ function AppleIcon() {
     </svg>
   );
 }
+
 function PlayIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -66,71 +66,74 @@ function PlayIcon() {
 
 export function Footer() {
   return (
-    <footer className="bg-secondary text-white mt-auto">
+    <footer className="bg-ink-900 text-white">
 
-      {/* App Store Buttons */}
-      <div className="border-b border-white/10">
-        <div className="container-bee py-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+      {/* App Store band */}
+      <div className="border-b border-white/8">
+        <div className="container-bee py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="font-poppins font-bold text-base text-white mb-0.5">📱 BEE sur mobile</p>
-            <p className="text-sm text-white/50 font-inter">Téléchargez l'app — disponible bientôt</p>
+            <p className="font-poppins font-bold text-sm text-white">📱 BEE sur mobile</p>
+            <p className="text-xs text-white/40 font-inter mt-0.5">Application disponible bientôt</p>
           </div>
           <div className="flex gap-3">
-            <button disabled className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 opacity-60 cursor-not-allowed">
-              <AppleIcon />
-              <div className="text-left">
-                <p className="text-[10px] text-white/60 font-inter leading-none">Bientôt sur</p>
-                <p className="text-sm font-poppins font-semibold text-white leading-tight">App Store</p>
-              </div>
-            </button>
-            <button disabled className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 opacity-60 cursor-not-allowed">
-              <PlayIcon />
-              <div className="text-left">
-                <p className="text-[10px] text-white/60 font-inter leading-none">Bientôt sur</p>
-                <p className="text-sm font-poppins font-semibold text-white leading-tight">Google Play</p>
-              </div>
-            </button>
+            {[
+              { icon: <AppleIcon />, store: "App Store",    sub: "Bientôt sur" },
+              { icon: <PlayIcon />,  store: "Google Play",  sub: "Bientôt sur" },
+            ].map(({ icon, store, sub }) => (
+              <button
+                key={store}
+                disabled
+                className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/6 border border-white/10 opacity-50 cursor-not-allowed transition-all"
+              >
+                <span className="text-white/70">{icon}</span>
+                <div className="text-left">
+                  <p className="text-[10px] text-white/40 font-inter leading-none">{sub}</p>
+                  <p className="text-sm font-poppins font-semibold text-white leading-tight">{store}</p>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Main footer */}
-      <div className="container-bee py-10">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+      {/* Main footer content */}
+      <div className="container-bee pt-12 pb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
 
-          {/* Brand */}
+          {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-honey-gradient flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2.5 mb-5 group">
+              <div className="w-9 h-9 rounded-xl bg-honey-gradient flex items-center justify-center shadow-honey shrink-0 group-hover:scale-105 transition-transform">
                 <span className="text-xl">🐝</span>
               </div>
               <span className="font-poppins font-black text-xl text-white">BEE</span>
             </Link>
-            <p className="text-sm text-white/50 font-inter leading-relaxed mb-5">
-              Le marché en ligne du Cameroun. Des milliers de produits, des centaines de vendeurs vérifiés.
+            <p className="text-sm text-white/40 font-inter leading-relaxed mb-6">
+              Le marché en ligne du Cameroun. Des milliers de produits auprès de vendeurs vérifiés.
             </p>
-            {/* Social */}
+            {/* Social icons */}
             <div className="flex items-center gap-2">
               {socialLinks.map(({ href, label, Icon }) => (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-primary transition-colors flex items-center justify-center">
-                  <Icon size={15} />
+                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-8 h-8 rounded-lg bg-white/8 border border-white/8 text-white/50 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 flex items-center justify-center">
+                  <Icon size={14} />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
+          {/* Link columns */}
           {Object.values(footerLinks).map((section) => (
             <div key={section.title}>
-              <h4 className="font-poppins font-semibold text-xs text-white mb-4 uppercase tracking-widest">
+              <h4 className="font-poppins font-semibold text-xs text-white/50 uppercase tracking-widest mb-4">
                 {section.title}
               </h4>
               <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href}
-                      className="text-sm text-white/50 hover:text-white transition-colors font-inter">
+                      className="text-sm text-white/60 hover:text-white font-inter transition-colors duration-150 inline-block">
                       {link.label}
                     </Link>
                   </li>
@@ -140,17 +143,17 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Contact */}
-        <div className="mt-10 pt-8 border-t border-white/10 grid sm:grid-cols-3 gap-4">
+        {/* Contact row */}
+        <div className="mt-10 pt-8 border-t border-white/8 grid sm:grid-cols-3 gap-4">
           {[
-            { href:"mailto:contact@bee.cm",    Icon:Mail,  text:"contact@bee.cm"   },
-            { href:"tel:+237699000000",        Icon:Phone, text:"+237 699 000 000" },
-            { href:"#",                        Icon:MapPin,text:"Yaoundé & Douala, CM" },
+            { href:"mailto:contact@bee.cm",  Icon:Mail,  text:"contact@bee.cm"     },
+            { href:"tel:+33625839007",        Icon:Phone, text:"+33 6 25 83 90 07"  },
+            { href:"#",                       Icon:MapPin,text:"Cameroun"           },
           ].map(({ href, Icon, text }) => (
             <a key={text} href={href}
-              className="flex items-center gap-3 text-sm text-white/50 hover:text-white transition-colors font-inter group">
-              <span className="w-8 h-8 rounded-lg bg-white/10 group-hover:bg-primary/20 transition-colors flex items-center justify-center shrink-0">
-                <Icon size={14} className="text-primary" />
+              className="flex items-center gap-3 text-sm text-white/50 hover:text-white transition-colors duration-150 group">
+              <span className="w-8 h-8 rounded-lg bg-white/6 border border-white/8 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:border-primary transition-all duration-200">
+                <Icon size={14} className="text-primary group-hover:text-white transition-colors" />
               </span>
               {text}
             </a>
@@ -158,10 +161,10 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="border-t border-white/10">
+      {/* Bottom bar */}
+      <div className="border-t border-white/8">
         <div className="container-bee py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30 font-inter">
-          <p>© {new Date().getFullYear()} BEE Marketplace. Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} BEE Marketplace — Tous droits réservés.</p>
           <p>Fait avec 🐝 au Cameroun</p>
         </div>
       </div>

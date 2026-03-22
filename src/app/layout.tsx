@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers/providers";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,43 +17,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "BEE — Le marché qui bourdonne",
-    template: "%s | BEE",
-  },
-  description:
-    "BEE est le premier marketplace multi-vendeurs du Cameroun. Achetez et vendez des milliers de produits avec livraison partout au pays.",
-  keywords: ["marketplace", "cameroun", "achat en ligne", "vente", "livraison"],
-  authors: [{ name: "BEE" }],
-  creator: "BEE",
-  openGraph: {
-    type: "website",
-    locale: "fr_CM",
-    url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: "BEE",
-    title: "BEE — Le marché qui bourdonne",
-    description: "Achetez et vendez des milliers de produits sur BEE.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "BEE — Le marché qui bourdonne",
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: { default: "BEE — Le marché qui bourdonne", template: "%s | BEE" },
+  description: "BEE est le premier marketplace multi-vendeurs du Cameroun.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body
-        className={`${poppins.variable} ${inter.variable} font-inter antialiased bg-background text-foreground`}
-      >
-        {children}
+      <body className={`${poppins.variable} ${inter.variable} font-inter antialiased bg-background text-foreground`}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -260,3 +260,38 @@ export async function getRelatedProducts(categoryId: string, excludeSlug: string
     .limit(limit + 1)
     .then(rows => rows.filter(r => r.slug !== excludeSlug).slice(0, limit));
 }
+
+// ─── Get all active vendors ───────────────────────────────────────────────────
+
+export async function getAllVendors() {
+  const { vendors } = await import("@/lib/db/schema");
+  return db
+    .select({
+      id:           vendors.id,
+      shopName:     vendors.shopName,
+      slug:         vendors.slug,
+      description:  vendors.description,
+      logo:         vendors.logo,
+      banner:       vendors.banner,
+      region:       vendors.region,
+      city:         vendors.city,
+      rating:       vendors.rating,
+      totalReviews: vendors.totalReviews,
+      totalSales:   vendors.totalSales,
+      isVerified:   vendors.isVerified,
+      isFeatured:   vendors.isFeatured,
+    })
+    .from(vendors)
+    .where(eq(vendors.status, "ACTIVE"))
+    .orderBy(desc(vendors.isFeatured), desc(vendors.totalSales));
+}
+
+// ─── Get all categories (with count) ─────────────────────────────────────────
+
+export async function getAllCategories() {
+  return db
+    .select()
+    .from(categories)
+    .where(eq(categories.isActive, true))
+    .orderBy(asc(categories.order));
+}
