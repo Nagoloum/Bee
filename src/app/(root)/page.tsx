@@ -1,13 +1,16 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight, Zap, ShieldCheck, Truck, RefreshCw } from "lucide-react";
 import { getFeaturedProducts, getNewArrivals, getFeaturedCategories, getTopVendors } from "@/lib/actions/products";
+import { getActiveBanners } from "@/lib/actions/banners";
 import { ProductCard } from "@/components/storefront/product-card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils/cn";
 import * as LucideIcons from "lucide-react";
 import { PromoBannerCarousel } from "@/components/storefront/promo-carousel";
+// ✅ PATCH — capture le ?ref= dans sessionStorage pour le parrainage
+import { RefCapture } from "@/components/storefront/ref-capture";
 
 export const revalidate = 60;
 
@@ -29,22 +32,26 @@ function SectionHeader({ title, subtitle, href, badge }: { title: string; subtit
 }
 
 export default async function HomePage() {
-  const [featured, newArrivals, featuredCats, topVendors] = await Promise.all([
+  const [featured, newArrivals, featuredCats, topVendors, dbBanners] = await Promise.all([
     getFeaturedProducts(8),
     getNewArrivals(8),
     getFeaturedCategories(),
     getTopVendors(6),
+    getActiveBanners(),
   ]);
 
   return (
     <div className="min-h-screen">
+      {/* ✅ PATCH — RefCapture (invisible, capture ?ref= pour le parrainage) */}
+      <Suspense fallback={null}>
+        <RefCapture />
+      </Suspense>
 
       {/* ── HERO ──────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-ink-900">
         <div className="absolute inset-0 bg-dots-pattern opacity-20" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-honey-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
         <div className="container-bee relative py-16 md:py-24">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-semibold font-poppins mb-6 animate-fade-down">
@@ -90,8 +97,8 @@ export default async function HomePage() {
             {[
               { icon: Truck,       text:"Livraison rapide",  sub:"Partout au Cameroun"   },
               { icon: ShieldCheck, text:"Paiement sécurisé", sub:"Stripe & Mobile Money" },
-              { icon: RefreshCw,   text:"Retour facile",     sub:"Sous 7 jours"           },
-              { icon: Zap,         text:"Ventes Flash",      sub:"Jusqu'à -50%"           },
+              { icon: RefreshCw,   text:"Retour facile",     sub:"Sous 7 jours"          },
+              { icon: Zap,         text:"Ventes Flash",      sub:"Jusqu'à -50%"          },
             ].map(({ icon: Icon, text, sub }) => (
               <div key={text} className="flex items-center gap-3 py-2">
                 <div className="w-9 h-9 rounded-xl bg-honey-50 flex items-center justify-center shrink-0">
@@ -107,8 +114,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── PROMO CAROUSEL ───────────────────────────────────────────────────── */}
-      <PromoBannerCarousel />
+      {/* ── PROMO CAROUSEL ────────────────────────────────────────────────────── */}
+      <PromoBannerCarousel banners={dbBanners.length > 0 ? dbBanners : undefined} />
 
       {/* ── CATEGORIES ────────────────────────────────────────────────────────── */}
       <section className="container-bee section-bee">
@@ -116,17 +123,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {featuredCats.map((cat) => {
             const IconComp = (LucideIcons as any)[cat.icon ?? "Package"];
-            const PLACEHOLDERS: Record<string, string> = {
-              electronique: "https://picsum.photos/seed/electronique/400/300",
-              mode:         "https://picsum.photos/seed/mode-fashion/400/300",
-              maison:       "https://picsum.photos/seed/maison-cuisine/400/300",
-              beaute:       "https://picsum.photos/seed/beaute-sante/400/300",
-              alimentation: "https://picsum.photos/seed/alimentation-cm/400/300",
-              sport:        "https://picsum.photos/seed/sport-loisirs/400/300",
-              artisanat:    "https://picsum.photos/seed/artisanat-cm/400/300",
-              informatique: "https://picsum.photos/seed/informatique/400/300",
-            };
-            const image = cat.image ?? PLACEHOLDERS[cat.slug];
+            const image = cat.image;
             return (
               <Link key={cat.id} href={`/products?category=${cat.slug}`}
                 className="group relative overflow-hidden rounded-2xl border border-border hover:border-honey-300 hover:shadow-honey transition-all duration-200 aspect-square flex flex-col justify-end">
@@ -135,7 +132,7 @@ export default async function HomePage() {
                   <img src={image} alt={cat.name}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white"
+                  <div className="absolute inset-0 flex items-center justify-center"
                     style={{ backgroundColor: `${cat.color}18` }}>
                     {IconComp ? <IconComp size={28} style={{ color: cat.color }} /> : <span className="text-2xl">📦</span>}
                   </div>

@@ -7,41 +7,32 @@ import {
 } from "drizzle-orm/pg-core";
 import { createId } from "../utils";
 
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
 export const userRoleEnum = pgEnum("user_role", [
-  "CLIENT",
-  "VENDOR",
-  "DELIVERY",
-  "ADMIN",
+  "CLIENT", "VENDOR", "DELIVERY", "ADMIN",
 ]);
 
 export const userStatusEnum = pgEnum("user_status", [
-  "ACTIVE",
-  "SUSPENDED",
-  "PENDING",
-  "BANNED",
+  "ACTIVE", "SUSPENDED", "PENDING", "BANNED",
 ]);
 
-// ─── Users ────────────────────────────────────────────────────────────────────
-// Compatible with better-auth schema
-
 export const users = pgTable("users", {
-  id:            text("id").primaryKey().$defaultFn(createId),
-  name:          text("name").notNull(),
-  email:         text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  image:         text("image"),
-  phone:         text("phone"),
-  phoneVerified: boolean("phone_verified").notNull().default(false),
-  role:          userRoleEnum("role").notNull().default("CLIENT"),
-  status:        userStatusEnum("status").notNull().default("ACTIVE"),
-  region:        text("region"),
-  createdAt:     timestamp("created_at").notNull().defaultNow(),
-  updatedAt:     timestamp("updated_at").notNull().defaultNow(),
+  id:               text("id").primaryKey().$defaultFn(createId),
+  name:             text("name").notNull(),
+  email:            text("email").notNull().unique(),
+  emailVerified:    boolean("email_verified").notNull().default(false),
+  image:            text("image"),
+  phone:            text("phone"),
+  phoneVerified:    boolean("phone_verified").notNull().default(false),
+  role:             userRoleEnum("role").notNull().default("CLIENT"),
+  status:           userStatusEnum("status").notNull().default("ACTIVE"),
+  region:           text("region"),
+  referralCode:     text("referral_code").unique(),
+  // ✅ 2FA TOTP
+  twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
+  twoFactorSecret:  text("two_factor_secret"),
+  createdAt:        timestamp("created_at").notNull().defaultNow(),
+  updatedAt:        timestamp("updated_at").notNull().defaultNow(),
 });
-
-// ─── Sessions (better-auth) ───────────────────────────────────────────────────
 
 export const sessions = pgTable("sessions", {
   id:        text("id").primaryKey().$defaultFn(createId),
@@ -53,8 +44,6 @@ export const sessions = pgTable("sessions", {
   userAgent: text("user_agent"),
   userId:    text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
 });
-
-// ─── Accounts (better-auth OAuth) ────────────────────────────────────────────
 
 export const accounts = pgTable("accounts", {
   id:                    text("id").primaryKey().$defaultFn(createId),
@@ -72,8 +61,6 @@ export const accounts = pgTable("accounts", {
   updatedAt:             timestamp("updated_at").notNull().defaultNow(),
 });
 
-// ─── Verifications (better-auth OTP/email) ────────────────────────────────────
-
 export const verifications = pgTable("verifications", {
   id:         text("id").primaryKey().$defaultFn(createId),
   identifier: text("identifier").notNull(),
@@ -82,8 +69,6 @@ export const verifications = pgTable("verifications", {
   createdAt:  timestamp("created_at").defaultNow(),
   updatedAt:  timestamp("updated_at").defaultNow(),
 });
-
-// ─── Delivery Addresses ───────────────────────────────────────────────────────
 
 export const deliveryAddresses = pgTable("delivery_addresses", {
   id:        text("id").primaryKey().$defaultFn(createId),
@@ -102,13 +87,9 @@ export const deliveryAddresses = pgTable("delivery_addresses", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 export type User            = typeof users.$inferSelect;
 export type NewUser         = typeof users.$inferInsert;
 export type Session         = typeof sessions.$inferSelect;
 export type Account         = typeof accounts.$inferSelect;
-export type Verification    = typeof verifications.$inferSelect;
 export type DeliveryAddress = typeof deliveryAddresses.$inferSelect;
 export type UserRole        = "CLIENT" | "VENDOR" | "DELIVERY" | "ADMIN";
-export type UserStatus      = "ACTIVE" | "SUSPENDED" | "PENDING" | "BANNED";

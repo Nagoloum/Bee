@@ -43,6 +43,9 @@ export const vendors = pgTable("vendors", {
   whatsapp:        text("whatsapp"),
   email:           text("email"),
   website:         text("website"),
+  // ✅ FIX — coordonnées GPS boutique (pour la carte livreur)
+  lat:             text("lat"),
+  lng:             text("lng"),
   status:          vendorStatusEnum("status").notNull().default("PENDING"),
   isVerified:      boolean("is_verified").notNull().default(false),
   isFeatured:      boolean("is_featured").notNull().default(false),
@@ -64,16 +67,21 @@ export const deliveryAgents = pgTable("delivery_agents", {
   vehiclePlate:      text("vehicle_plate"),
   region:            text("region").notNull(),
   status:            deliveryAgentStatusEnum("status").notNull().default("OFFLINE"),
-  plan:              text("plan").notNull().default("FREELANCE"), // FREELANCE | PREMIUM
+  plan:              text("plan").notNull().default("FREELANCE"),
   totalDeliveries:   integer("total_deliveries").notNull().default(0),
   successDeliveries: integer("success_deliveries").notNull().default(0),
   failedDeliveries:  integer("failed_deliveries").notNull().default(0),
   rating:            real("rating").notNull().default(0),
   totalReviews:      integer("total_reviews").notNull().default(0),
-  hasBadge:          boolean("has_badge").notNull().default(false), // "Fiable" badge
+  hasBadge:          boolean("has_badge").notNull().default(false),
   currentLat:        text("current_lat"),
   currentLng:        text("current_lng"),
   lastLocationAt:    timestamp("last_location_at"),
+  // ✅ FIX — colonnes ajoutées pour le dashboard livreur (paramètres + paiement)
+  paymentMethod:     text("payment_method"),       // "mobile_money" | "bank"
+  paymentDetails:    text("payment_details"),      // numéro téléphone ou IBAN
+  paymentName:       text("payment_name"),         // nom bénéficiaire
+  bio:               text("bio"),                  // description courte du livreur
   createdAt:         timestamp("created_at").notNull().defaultNow(),
   updatedAt:         timestamp("updated_at").notNull().defaultNow(),
 });

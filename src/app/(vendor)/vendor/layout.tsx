@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/helpers";
 import { getVendorByUserId } from "@/lib/actions/vendor";
 import { VendorSidebar } from "@/components/vendor/vendor-sidebar";
-import { VendorTopBar } from "@/components/vendor/vendor-topbar";
+import { VendorTopbar } from "@/components/vendor/vendor-topbar";
 
 export default async function VendorLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession();
@@ -23,7 +23,7 @@ export default async function VendorLayout({ children }: { children: React.React
 
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <VendorTopBar user={user} vendor={vendor} />
+        <VendorTopbar user={user} vendor={vendor} />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

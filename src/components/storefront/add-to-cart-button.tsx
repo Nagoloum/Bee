@@ -1,72 +1,122 @@
 "use client";
 
-import React, { useState } from "react";
-import { ShoppingCart, Minus, Plus, Check } from "lucide-react";
-import { useCartStore } from "@/store/cart.store";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ShoppingCart, Check, Loader2, Minus, Plus } from "lucide-react";
+import { useCartStore } from "@/lib/store/cart";
+import { useAuthCart } from "@/components/storefront/use-auth-cart";
+import { LoginRequiredModal } from "@/components/storefront/login-required-modal";
 import { cn } from "@/lib/utils/cn";
 
-interface Props {
-  product: {
-    id:          string;
-    name:        string;
-    slug:        string;
-    images:      string[];
-    basePrice:   number;
-    stock:       number;
-    vendorId:    string;
-    vendorName?: string | null;
-  };
+interface Variant {
+  id:     string;
+  label:  string;
+  price:  number;
+  stock:  number;
 }
 
-export function AddToCartButton({ product }: Props) {
-  const [qty, setQty]       = useState(1);
-  const [added, setAdded]   = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
+interface Product {
+  id:          string;
+  name:        string;
+  slug:        string;
+  basePrice:   number;
+  images?:     string[];
+  stock?:      number;
+  variants?:   Variant[];
+  vendor?:     { id: string; shopName: string };
+  vendorId?:   string;
+}
 
-  const handleAdd = () => {
-    if (product.stock === 0) return;
+interface Props {
+  product:  Product;
+  variant?: Variant;
+  /** Afficher le sélecteur de quantité */
+  showQty?: boolean;
+  className?: string;
+}
+
+export function AddToCartButton({ product, variant, showQty = false, className }: Props) {
+  const [qty,     setQty]     = useState(1);
+  const [added,   setAdded]   = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const addItem = useCartStore(s => s.addItem);
+
+  // ✅ Hook auth — affiche LoginRequiredModal si non connecté
+  const { requireAuth, showLoginModal, setShowLoginModal } = useAuthCart();
+
+  const maxStock = variant?.stock ?? product.stock ?? 99;
+  const price    = variant?.price ?? product.basePrice;
+  const outOfStock = maxStock <= 0;
+
+  const doAdd = requireAuth(() => {
+    setLoading(true);
+
     addItem({
-      productId:  product.id,
-      name:       product.name,
-      image:      (product.images as string[])[0],
-      price:      product.basePrice,
-      quantity:   qty,
-      vendorId:   product.vendorId ?? "",
-      vendorName: product.vendorName ?? "",
-      stock:      product.stock,
+      productId:    product.id,
+      name:         product.name,
+      slug:         product.slug,
+      unitPrice:    price,
+      image:        product.images?.[0] ?? null,
+      vendorId:     product.vendorId ?? product.vendor?.id ?? "",
+      variantId:    variant?.id ?? null,
+      variantLabel: variant?.label ?? null,
+      quantity:     qty,
     });
+
     setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
-  };
+    setTimeout(() => { setAdded(false); setLoading(false); }, 1500);
+  });
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3">
-      {/* Quantity */}
-      <div className="flex items-center border-2 border-border rounded-xl overflow-hidden">
-        <button onClick={() => setQty(Math.max(1, qty - 1))}
-          className="w-10 h-11 flex items-center justify-center hover:bg-muted transition-colors text-foreground font-bold">
-          <Minus size={16} />
-        </button>
-        <span className="w-12 text-center font-poppins font-bold text-base text-foreground">{qty}</span>
-        <button onClick={() => setQty(Math.min(product.stock, qty + 1))}
-          disabled={qty >= product.stock}
-          className="w-10 h-11 flex items-center justify-center hover:bg-muted transition-colors text-foreground font-bold disabled:opacity-40">
-          <Plus size={16} />
+    <>
+      {/* ✅ Popup connexion requise */}
+      <LoginRequiredModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        message="Connectez-vous pour ajouter ce produit à votre panier et passer commande."
+      />
+
+      <div className={cn("flex items-center gap-3", className)}>
+        {/* Sélecteur quantité */}
+        {showQty && (
+          <div className="flex items-center gap-2 h-11 px-3 rounded-2xl border border-border bg-cream-50">
+            <button
+              onClick={() => setQty(q => Math.max(1, q - 1))}
+              disabled={qty <= 1}
+              className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white transition-colors disabled:opacity-30">
+              <Minus size={12} />
+            </button>
+            <span className="w-6 text-center text-sm font-poppins font-bold text-foreground">
+              {qty}
+            </span>
+            <button
+              onClick={() => setQty(q => Math.min(maxStock, q + 1))}
+              disabled={qty >= maxStock}
+              className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white transition-colors disabled:opacity-30">
+              <Plus size={12} />
+            </button>
+          </div>
+        )}
+
+        {/* Bouton ajouter */}
+        <button
+          onClick={doAdd}
+          disabled={outOfStock || loading || added}
+          className={cn(
+            "flex-1 h-11 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold font-poppins text-white transition-all disabled:cursor-not-allowed",
+            outOfStock
+              ? "bg-muted text-muted-foreground"
+              : added
+                ? "bg-green-500"
+                : "hover:opacity-90 active:scale-[0.98]"
+          )}
+          style={!outOfStock && !added ? { background: "linear-gradient(135deg,#F6861A,#E5750D)" } : {}}>
+          {loading && !added && <Loader2 size={15} className="animate-spin" />}
+          {added    && <Check size={15} />}
+          {!loading && !added && <ShoppingCart size={15} />}
+          {outOfStock ? "Rupture de stock" : added ? "Ajouté !" : "Ajouter au panier"}
         </button>
       </div>
-
-      {/* Add button */}
-      <Button
-        fullWidth
-        onClick={handleAdd}
-        disabled={product.stock === 0}
-        className={cn("transition-all", added && "bg-success hover:bg-success")}
-        leftIcon={added ? <Check size={18} /> : <ShoppingCart size={18} />}
-        size="lg"
-      >
-        {product.stock === 0 ? "Rupture de stock" : added ? "Ajouté !" : "Ajouter au panier"}
-      </Button>
-    </div>
+    </>
   );
 }

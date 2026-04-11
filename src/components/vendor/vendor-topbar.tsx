@@ -1,44 +1,45 @@
 "use client";
 
-import Link from "next/link";
-import { Bell, ExternalLink } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { VendorNotificationBell } from "@/components/vendor/vendor-notification-bell";
+import { useRouter } from "next/navigation";
 
 interface Props {
-  user:   { name: string; image?: string | null; email: string };
-  vendor: { shopName: string; slug: string } | null;
+  user: {
+    id:    string;
+    name:  string;
+    email: string;
+    image: string | null;
+  };
+  onMenuClick?: () => void;
 }
 
-export function VendorTopBar({ user, vendor }: Props) {
+export function VendorTopbar({ user, onMenuClick }: Props) {
   return (
-    <header className="h-14 border-b border-border bg-background flex items-center justify-between px-6 shrink-0">
-      <div className="flex items-center gap-3 min-w-0">
-        <h1 className="font-poppins font-semibold text-sm text-foreground hidden sm:block truncate">
-          {vendor?.shopName ?? "Tableau de bord"}
-        </h1>
-        {vendor && (
-          <Link
-            href={`/shop/${vendor.slug}`}
-            target="_blank"
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors font-inter shrink-0"
-          >
-            <ExternalLink size={12} />
-            <span className="hidden sm:inline">Voir ma boutique</span>
-          </Link>
-        )}
+    <header className="sticky top-0 z-30 w-full h-14 flex items-center justify-between px-4 border-b border-border bg-background/95 backdrop-blur-sm">
+
+      {/* Menu burger mobile */}
+      <button
+        onClick={onMenuClick}
+        className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-muted transition-colors">
+        <Menu size={18} className="text-foreground" />
+      </button>
+
+      {/* Logo / titre — desktop */}
+      <div className="hidden lg:flex items-center gap-2">
+        <span className="font-poppins font-black text-lg text-primary">🐝 BEE</span>
+        <span className="text-xs font-inter text-muted-foreground">Espace Vendeur</span>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon-sm" asChild>
-          <Link href="/notifications">
-            <Bell size={18} />
-          </Link>
-        </Button>
+        {/* ✅ PATCH — userId corrigé : user.id au lieu de userId */}
+        <VendorNotificationBell userId={user.id} />
+
         <div className="flex items-center gap-2 ml-1">
           <Avatar src={user.image} name={user.name} size="sm" color="random" />
           <span className="text-sm font-semibold font-poppins text-foreground hidden sm:block">
-            {user.name.split(" ")[0]}
+            {user.name}
           </span>
         </div>
       </div>

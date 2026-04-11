@@ -43,21 +43,30 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     if (vendorWallet[0]) {
       const w = vendorWallet[0];
+      const prevBalance = w.balance ?? 0;
+      const prevEscrow  = w.escrow  ?? 0;
+      const newBalance  = prevBalance + o.total;
+      const newEscrow   = Math.max(0, prevEscrow - o.total);
+
       await db.update(wallets)
         .set({
-          balance:   (w.balance ?? 0) + o.total,
-          escrow:    Math.max(0, (w.escrow ?? 0) - o.total),
+          balance:   newBalance,
+          escrow:    newEscrow,
           updatedAt: new Date(),
         })
         .where(eq(wallets.id, w.id));
 
+      // ✅ FIX: referenceId (not orderId) + required balanceBefore/balanceAfter
       await db.insert(walletTransactions).values({
-        id:       createId(),
-        walletId: w.id,
-        type:     "CREDIT",
-        amount:   o.total,
-        reason:   "ESCROW_RELEASE",
-        orderId:  o.id,
+        id:            createId(),
+        walletId:      w.id,
+        type:          "CREDIT",
+        amount:        o.total,
+        reason:        "ESCROW_RELEASE",
+        referenceId:   o.id,        // ← was incorrectly "orderId"
+        balanceBefore: prevBalance,  // ← was missing (required field)
+        balanceAfter:  newBalance,   // ← was missing (required field)
+        description:   `Libération escrow commande ${o.orderNumber}`,
       });
     }
 

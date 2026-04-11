@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Spinner } from "@/components/ui/spinner";
+import {ClientNotificationBell} from "@/components/storefront/client-notification-bell";
 
 const navLinks = [
   { href: "/",            label: "Accueil"              },
@@ -120,9 +121,8 @@ export function Navbar() {
               </div>
             ) : user ? (
               <>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link href="/notifications"><Bell size={20} /></Link>
-                </Button>
+
+                {user && <ClientNotificationBell userId={user.id} />}
 
                 {/* User dropdown */}
                 <div className="relative ml-1" data-user-menu>

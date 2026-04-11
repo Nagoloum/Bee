@@ -1,57 +1,69 @@
+/**
+ * src/lib/db/resetadmin.ts
+ * Usage : npm run db:resetadmin
+ *
+ * Utilise le hashing natif de Better-Auth (scrypt) — pas bcrypt
+ */
+
 import { db } from "./index";
-import { users, accounts, vendors, products } from "./schema";
-import { inArray } from "drizzle-orm";
+import { users, accounts } from "./schema";
+import { eq } from "drizzle-orm";
+import { auth } from "../auth"; // votre instance Better-Auth
 
-const DEMO_EMAILS = [
-  "admin@bee.cm",
-  "amina@demo.com",
-  "jean@demo.com",
-  "fatima@demo.com",
-];
+const ADMIN_EMAIL    = "admin@bee.cm";
+const ADMIN_PASSWORD = "Admin@BEE2026!";
+const ADMIN_NAME     = "Admin BEE";
 
-async function reset() {
-  console.log("🗑️  Resetting demo accounts...\n");
+async function main() {
+  console.log("🐝 Création du compte admin...\n");
 
-  // Get user IDs
-  const demoUsers = await db
-    .select({ id: users.id, email: users.email })
-    .from(users)
-    .where(inArray(users.email, DEMO_EMAILS));
+  // Vérifier si l'admin existe déjà
+  const existing = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, ADMIN_EMAIL))
+      .limit(1);
 
-  if (demoUsers.length === 0) {
-    console.log("  ℹ️  No demo users found — nothing to reset.");
+  if (existing[0]) {
+    // Mettre à jour le rôle uniquement
+    await db.update(users)
+        .set({ role: "ADMIN", status: "ACTIVE", emailVerified: true })
+        .where(eq(users.id, existing[0].id));
+
+    console.log("✅ Admin existant — rôle mis à jour.");
+    console.log(`   Email    : ${ADMIN_EMAIL}`);
+    console.log(`   Password : ${ADMIN_PASSWORD}\n`);
     process.exit(0);
   }
 
-  const ids = demoUsers.map((u) => u.id);
+  // Utiliser l'API Better-Auth pour créer le compte correctement
+  // (gère le hashing scrypt automatiquement)
+  const result = await auth.api.signUpEmail({
+    body: {
+      name:     ADMIN_NAME,
+      email:    ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
+    },
+  });
 
-  // Delete accounts (FK cascade should handle, but explicit is safer)
-  await db.delete(accounts).where(inArray(accounts.userId, ids));
-  console.log(`  ✅ Deleted accounts for ${ids.length} users`);
+  if (!result?.user?.id) {
+    console.error("❌ Échec de la création via Better-Auth.");
+    process.exit(1);
+  }
 
-  // Delete vendors linked to these users
-  // (products will cascade from vendors)
-  const { vendors: vendorsTable } = await import("./schema");
-  await db.delete(vendorsTable).where(inArray(vendorsTable.userId, ids));
-  console.log("  ✅ Deleted vendor profiles");
+  // Mettre à jour le rôle en ADMIN (Better-Auth crée CLIENT par défaut)
+  await db.update(users)
+      .set({ role: "ADMIN", status: "ACTIVE", emailVerified: true })
+      .where(eq(users.id, result.user.id));
 
-  // Delete users
-  await db.delete(users).where(inArray(users.id, ids));
-  console.log(`  ✅ Deleted users: ${demoUsers.map((u) => u.email).join(", ")}`);
-
-  // Delete seeded products (by known slugs)
-  const DEMO_SLUGS = [
-    "samsung-galaxy-a54", "ecouteurs-jbl-tune", "laptop-lenovo-ideapad",
-    "robe-wax-kente", "sac-main-cuir", "chemise-batik-homme",
-    "marmite-fonte-10l", "ventilateur-binatone", "huile-coco-naturelle",
-    "creme-karite-pur", "cafe-arabica-cameroun", "miel-naturel-pur",
-    "ballon-football-adidas", "sculpture-bois-ebene", "masque-bamileke",
-  ];
-  await db.delete(products).where(inArray(products.slug, DEMO_SLUGS));
-  console.log("  ✅ Deleted demo products");
-
-  console.log("\n✅ Reset complete — run npm run db:seed to re-seed.");
+  console.log("✅ Admin créé !\n");
+  console.log(`   Email    : ${ADMIN_EMAIL}`);
+  console.log(`   Password : ${ADMIN_PASSWORD}`);
+  console.log("\n⚠️  Changez le mot de passe après la première connexion.\n");
   process.exit(0);
 }
 
-reset().catch((err) => { console.error("❌", err); process.exit(1); });
+main().catch(err => {
+  console.error("❌ Erreur :", err.message);
+  process.exit(1);
+});
