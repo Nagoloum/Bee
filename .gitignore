@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+.expo/
+out/
+
+# Turbo
+.turbo/
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+.*.sublime-workspace
+*.sublime-project
+*.sublime-*
+.eslintcache
+.prettiercache
+.editorconfig
+.eslintignore
+.prettierignore
+.claude/
+
+# Prisma
+apps/api/prisma/migrations/dev/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Mobile
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+ios/
+android/
+
+# Misc
+.cache/
+tmp/
+tsconfig.tsbuildinfo
+
+# Uploads dev local
+uploads/
